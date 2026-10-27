@@ -1,6 +1,7 @@
--- 스도쿠 연습장: Supabase 설정
+-- Chan's SUDOKU: Supabase 설정
 -- Supabase 대시보드 → SQL Editor → New query 에 이 파일 전체를 붙여 넣고 Run 하세요.
--- 대전·협동 모드는 Realtime 채널만 쓰므로 테이블이 필요 없습니다.
+-- 대전·협동 방은 Realtime 채널만 쓰므로 방 테이블은 필요 없습니다. 대전·협동 기록은 scores 에 함께 저장됩니다.
+-- 앱을 새 버전으로 올릴 때마다 이 파일 전체를 다시 Run 해도 안전합니다.
 
 -- 1) 기록 테이블 ------------------------------------------------------------
 create table if not exists public.scores (
@@ -23,6 +24,19 @@ create table if not exists public.scores (
 
 create index if not exists scores_player_level on public.scores (player_public, level, score);
 
+-- 1-1) 대전·협동 기록 (v1.2.0) --------------------------------------------
+-- 이미 v1.1 테이블이 있어도 이 파일 전체를 다시 Run 하면 칸만 더해집니다.
+alter table public.scores add column if not exists play    text     not null default 'solo';  -- solo / versus / coop
+alter table public.scores add column if not exists team    text;                              -- 협동: 참가자 이름들
+alter table public.scores add column if not exists players smallint not null default 1;      -- 방 인원
+
+alter table public.scores drop constraint if exists scores_play_check;
+alter table public.scores add constraint scores_play_check check (play in ('solo', 'versus', 'coop'));
+alter table public.scores drop constraint if exists scores_team_check;
+alter table public.scores add constraint scores_team_check check (team is null or char_length(team) <= 80);
+alter table public.scores drop constraint if exists scores_players_check;
+alter table public.scores add constraint scores_players_check check (players between 1 and 4);
+
 -- 2) 접근 규칙 --------------------------------------------------------------
 -- 누구나(로그인 없이) 기록을 추가할 수 있지만, 테이블을 직접 읽거나 고치거나 지울 수는 없습니다.
 alter table public.scores enable row level security;
@@ -33,14 +47,18 @@ create policy "anyone can add a score"
   to anon, authenticated
   with check (true);
 
--- 3) 리더보드 보기 (사람별·난이도별 최고 기록 + 완성 횟수) ------------------
--- player_secret 은 빼고 보여 줍니다.
-create or replace view public.leaderboard as
-select distinct on (player_public, level)
-  player_public, level, name, score, t, hints, mistakes, mode, lives, hint_limit, created_at,
-  count(*) over (partition by player_public, level) as solved
-from public.scores
-order by player_public, level, score asc, created_at asc;
+-- 3) 리더보드 보기 (종류·난이도별 최고 기록 + 완성 횟수) --------------------
+-- 혼자·대전은 사람별, 협동은 팀(참가자 이름들)별로 묶습니다. player_secret 은 빼고 보여 줍니다.
+drop view if exists public.leaderboard;
+create view public.leaderboard as
+select distinct on (play, who, level)
+  player_public, level, name, score, t, hints, mistakes, mode, lives, hint_limit, play, team, players, created_at,
+  count(*) over (partition by play, who, level) as solved
+from (
+  select s.*, case when s.play = 'coop' then coalesce(s.team, s.player_public::text) else s.player_public::text end as who
+  from public.scores s
+) x
+order by play, who, level, score asc, created_at asc;
 
 grant select on public.leaderboard to anon, authenticated;
 

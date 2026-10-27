@@ -18,7 +18,7 @@ body { margin: 0; font: 14px/1.4 system-ui, sans-serif; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
 </style>
-<title>스도쿠 연습장</title>
+<title>Chan's SUDOKU</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
@@ -76,6 +76,7 @@ button:focus-visible, .board:focus-visible { outline: 2px solid var(--accent); o
 .top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .top h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 5vw, 34px); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
 .top h1 span { color: var(--accent); }
+.top h1 { cursor: pointer; }
 .meta { display: flex; gap: 14px; align-items: baseline; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; flex-wrap: wrap; }
 .meta b { color: var(--ink); font-weight: 600; }
 .meta .lives { display: inline-flex; gap: 3px; vertical-align: -1px; }
@@ -102,7 +103,7 @@ button:focus-visible, .board:focus-visible { outline: 2px solid var(--accent); o
 .modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: color-mix(in srgb, var(--ink) 40%, transparent);
   padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .modal[hidden] { display: none; }
-body.paused .board-wrap, body.paused .panel { filter: blur(12px); }
+body.paused .board, body.paused .lines, body.paused .panel { filter: blur(12px); }
 .cf-row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .btn-primary.danger { background: var(--bad); color: #fff; }
 .sheet { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; width: min(100%, 420px); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow: auto; padding: 16px 18px 20px; display: grid; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
@@ -402,6 +403,47 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 .lb-msg { font-size: 13px; color: var(--muted); min-height: 1em; }
 .lb-msg.ok { color: var(--accent); }
 .lb-msg.err { color: var(--bad); }
+.lb-play { display: flex; gap: 6px; }
+.lb-play .seg button { padding: 6px 14px; }
+
+/* home screen */
+.home { position: fixed; inset: 0; z-index: 40; overflow: auto; background: var(--bg); display: grid; place-items: center;
+  padding: max(24px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.home-in { width: min(100%, 400px); display: grid; gap: 22px; }
+.home-title { display: grid; gap: 6px; text-align: center; }
+.home-title h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(38px, 11vw, 52px); letter-spacing: -0.03em; line-height: 1.05; }
+.home-title h1 span { color: var(--accent); }
+.home-title p { margin: 0; color: var(--muted); font-size: 14px; }
+.home-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; width: 84px; margin: 0 auto 4px; }
+.home-grid i { aspect-ratio: 1; border-radius: 3px; background: var(--peer); display: grid; place-items: center; font: 600 13px var(--display); font-style: normal; color: var(--accent); }
+.home-main { display: grid; gap: 8px; }
+.home-main .btn-primary, .home-main .btn-ghost { width: 100%; padding: 12px 16px; font-size: 16px; display: flex; justify-content: center; align-items: baseline; gap: 8px; }
+.home-main .btn-ghost { background: var(--raise); }
+.home-main small { font-weight: 400; font-size: 12px; opacity: .75; font-variant-numeric: tabular-nums; }
+.home-new { display: flex; gap: 8px; }
+.home-new .select-wrap { flex: 1; min-width: 0; }
+.home-new .select-wrap select { width: 100%; padding-block: 11px; }
+.home-new .btn-primary { flex: none; width: auto; }
+.home-sub { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.home-sub button { position: relative; display: grid; justify-items: center; gap: 4px; border: 1px solid var(--line); background: var(--raise); border-radius: 10px; padding: 10px 4px 8px; font-size: 12.5px; }
+.home-sub svg { width: 20px; height: 20px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.home-sub .dot { position: absolute; top: 6px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); }
+.home-foot { display: flex; justify-content: center; gap: 10px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.home-foot button { border: 0; background: none; color: var(--muted); padding: 0; text-decoration: underline; text-underline-offset: 3px; font-size: 12px; }
+.ver { font-size: 11px; font-weight: 500; color: var(--muted); font-family: var(--body); letter-spacing: 0; margin-left: 6px; vertical-align: 4px; }
+
+/* help and patch notes */
+.doc { display: grid; gap: 14px; font-size: 14px; line-height: 1.6; }
+.doc h3 { margin: 0 0 2px; font-size: 15px; font-family: var(--display); }
+.doc p { margin: 0; }
+.doc ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+.doc kbd { font: 600 12px var(--body); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--raise); }
+.doc .muted { color: var(--muted); font-size: 13px; }
+.note-ver { display: grid; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.note-ver:last-child { border-bottom: 0; padding-bottom: 0; }
+.note-ver h3 { display: flex; align-items: baseline; gap: 8px; }
+.note-ver h3 small { font: 400 12px var(--body); color: var(--muted); }
+.note-ver .new { font: 600 10px var(--body); color: var(--paper); background: var(--accent); border-radius: 4px; padding: 1px 6px; }
 
 @media (max-width: 760px) {
   .icon-btn span, .restart-btn span { display: none; }
@@ -427,7 +469,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   .board-wrap { margin: 0 auto; }
   body { padding-block: 12px 24px; }
   .app { gap: 12px; }
-  .top h1 { font-size: 24px; }
+  .top h1 { font-size: 24px; white-space: nowrap; }
+  .top h1 .ver { display: none; }
   .timer { font-size: 20px; }
   .play { gap: 10px; }
   .board-col { gap: 10px; }
@@ -452,6 +495,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 }
 @media (max-width: 480px) {
   .chip .n { font-size: 12px; }
+  .top h1 { font-size: 20px; letter-spacing: -0.03em; }
+  .top #homeBtn { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -460,7 +505,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 <body>
 <main class="app">
   <header class="top">
-    <h1>스도쿠 <span>연습장</span></h1>
+    <h1>Chan's <span>SUDOKU</span><span class="ver" id="verTag"></span></h1>
     <div class="meta">
       <span id="modeStat"></span>
       <span class="timer" id="timer">00:00</span>
@@ -478,6 +523,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg><span>다시하기</span></button>
     </div>
     <div class="bar-right" id="barRight">
+      <button class="icon-btn" id="homeBtn" type="button" title="처음 화면">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v12h14V9"/><path d="M10 21v-6h4v6"/></svg><span>홈</span></button>
       <button class="icon-btn" id="roomBtn" type="button" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg><span>같이 하기</span></button>
       <button class="icon-btn" id="techBtn" type="button" aria-haspopup="dialog">
@@ -526,6 +573,82 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     </aside>
   </div>
 </main>
+
+<div class="home" id="home" hidden>
+  <div class="home-in">
+    <div class="home-title">
+      <div class="home-grid" aria-hidden="true"><i>5</i><i></i><i>3</i><i></i><i>7</i><i></i><i>9</i><i></i><i>1</i></div>
+      <h1>Chan's <span>SUDOKU</span></h1>
+      <p>8단계 난이도 · 기법 힌트 · 대전과 협동</p>
+    </div>
+    <div class="home-main">
+      <button class="btn-primary" type="button" id="hmContinue" hidden>이어 하기 <small id="hmContinueInfo"></small></button>
+      <div class="home-new">
+        <div class="select-wrap"><select id="hmLevel" aria-label="새 게임 난이도"></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+        <button class="btn-primary" type="button" id="hmNew">새 게임</button>
+      </div>
+      <button class="btn-ghost" type="button" id="hmRoom">같이 하기 <small>대전 · 협동</small></button>
+    </div>
+    <div class="home-sub">
+      <button type="button" id="hmLb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M17 5h3v2a3 3 0 0 1-3 3"/><path d="M7 5H4v2a3 3 0 0 0 3 3"/></svg>리더보드</button>
+      <button type="button" id="hmTech"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H19"/><path d="M9 7h6M9 11h4"/></svg>기법</button>
+      <button type="button" id="hmHelp"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><path d="M12 17h.01"/></svg>도움말</button>
+      <button type="button" id="hmNotes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/></svg>패치노트<span class="dot" id="hmNotesDot" hidden></span></button>
+    </div>
+    <div class="home-foot"><span id="hmVer"></span><span>·</span><button type="button" id="hmSettings">설정</button></div>
+  </div>
+</div>
+
+<div class="modal" id="helpModal" hidden>
+  <div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="sheet-head"><h2 id="helpTitle">도움말</h2><button class="x-btn" type="button" data-close aria-label="닫기">✕</button></div>
+    <div class="doc">
+      <section><h3>규칙</h3>
+        <p>가로줄(행), 세로줄(열), 굵은 선으로 나뉜 3×3 박스마다 1부터 9까지 숫자가 한 번씩만 들어가도록 빈칸을 채웁니다.</p></section>
+      <section><h3>입력</h3>
+        <ul>
+          <li>칸을 누르고 아래 숫자판이나 키보드 <kbd>1</kbd>–<kbd>9</kbd>로 숫자를 넣습니다.</li>
+          <li><b>메모</b>: 메모 모드를 켜거나(<kbd>Shift</kbd>를 한 번 누름) <kbd>Shift</kbd>를 누른 채 숫자를 누르면 작은 후보 숫자를 적습니다. 휴대폰에서는 아래쪽 메모 줄을 씁니다.</li>
+          <li><b>후보</b>: 누르면 후보 모드가 켜져 누르는 빈칸마다 들어갈 수 있는 숫자를 채웁니다. 길게 누르면 모든 빈칸을 채웁니다(<kbd>C</kbd> / <kbd>Shift</kbd>+<kbd>C</kbd>).</li>
+          <li><b>지우기</b> <kbd>Del</kbd>, <b>취소</b> <kbd>Ctrl</kbd>+<kbd>Z</kbd>, 방향키로 칸 이동.</li>
+          <li>이미 넣은 숫자를 바꾸려면 먼저 지운 뒤 다시 넣습니다.</li>
+        </ul></section>
+      <section><h3>힌트</h3>
+        <p><b>힌트</b>(<kbd>H</kbd>)는 지금 판에서 쓸 수 있는 가장 쉬운 기법을 찾아 판 위에 선과 색으로 보여 줍니다. <kbd>Enter</kbd>나 <b>숫자 넣기 / 메모에 적용</b>으로 바로 적용할 수 있습니다. 설명에 밑줄 친 칸·행·열 이름에 손가락이나 마우스를 올리면 판에서 그 자리가 밝아집니다. 기법이 무엇인지는 <b>기법</b> 메뉴에서 예시와 함께 볼 수 있습니다.</p></section>
+      <section><h3>난이도와 채점</h3>
+        <ul>
+          <li>1~5단계는 기법만으로 풀리고, 6~8단계는 가정(이 칸이 이 숫자라면?)이 필요합니다.</li>
+          <li><b>즉시 확인</b>: 틀린 숫자를 바로 빨갛게 표시합니다. 기회 3번 또는 무제한.</li>
+          <li><b>다 채우고 채점</b>: 판을 다 채운 뒤 한꺼번에 채점합니다.</li>
+          <li>힌트 횟수(3회 / 무제한)와 채점 방식은 <b>설정</b>에서 바꾸며 새 문제부터 적용됩니다.</li>
+        </ul></section>
+      <section><h3>같이 하기</h3>
+        <ul>
+          <li><b>방 만들기</b>로 6자리 코드와 링크를 받아 친구에게 보냅니다. 한 방에 최대 4명.</li>
+          <li><b>대전</b>: 같은 문제를 동시에 풀고 먼저 완성한 사람이 이깁니다. 상대의 진행률과 실수만 보입니다.</li>
+          <li><b>협동</b>: 한 판을 함께 풉니다. 정답 숫자와 힌트는 모두에게 공유되고, 메모는 각자 따로입니다. 힌트 개수는 팀 전체가 나눠 씁니다.</li>
+          <li>방에 들어가 있는 동안(시작 전 대기 포함) 혼자 풀던 문제의 시간은 멈춰 있습니다.</li>
+          <li>방은 마지막 사람이 나갈 때까지 유지됩니다. 같은 코드로 다시 들어오거나, 참가하기의 <b>최근 방 다시 들어가기</b>를 누르세요.</li>
+        </ul></section>
+      <section><h3>리더보드</h3>
+        <ul>
+          <li>기록 = 풀이 시간 + (힌트 + 실수) × 30초. 낮을수록 좋습니다.</li>
+          <li><b>혼자</b>: 완성 후 이름을 넣어 등록합니다. 20초 미만 기록은 등록하지 않습니다.</li>
+          <li><b>대전</b>: 완성하면 각자의 기록이 자동으로 등록됩니다.</li>
+          <li><b>협동</b>: 완성하면 방장이 팀 기록(참가자 이름 모두)을 한 번 자동으로 등록합니다.</li>
+          <li>난이도마다 사람(협동은 팀)별 최고 기록만 보입니다.</li>
+        </ul></section>
+      <p class="muted" id="helpVer"></p>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="notesModal" hidden>
+  <div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="notesTitle">
+    <div class="sheet-head"><h2 id="notesTitle">패치노트</h2><button class="x-btn" type="button" data-close aria-label="닫기">✕</button></div>
+    <div class="doc" id="notesBody"></div>
+  </div>
+</div>
 
 <div class="modal" id="settingsModal" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
@@ -614,7 +737,12 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 <div class="modal" id="lbModal" hidden>
   <div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="lbTitle">
     <div class="sheet-head"><h2 id="lbTitle">리더보드</h2><button class="x-btn" type="button" data-close aria-label="닫기">✕</button></div>
-    <p class="lb-note">난이도별 개인 최고 기록 · 기록 = 풀이 시간 + (힌트 + 실수) × 30초 · 혼자 푼 기록만 올라갑니다</p>
+    <p class="lb-note" id="lbNote"></p>
+    <div class="lb-play"><div class="seg" role="radiogroup" aria-label="기록 종류" id="lbPlay">
+      <button type="button" role="radio" data-v="solo">혼자</button>
+      <button type="button" role="radio" data-v="versus">대전</button>
+      <button type="button" role="radio" data-v="coop">협동</button>
+    </div></div>
     <p class="lb-note" id="lbLocalNote" hidden>서버가 연결되지 않아 이 기기의 기록만 보입니다.</p>
     <div class="lb-tabs" role="tablist" id="lbTabs"></div>
     <div class="lb" id="lbBody"><div class="lb-empty">리더보드를 불러오는 중…</div></div>
@@ -1641,6 +1769,32 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   const TECH_TIER = { 1: '입문·쉬움', 2: '보통', 3: '어려움', 4: '전문가', 5: '마스터 이상', 6: '마스터 이상' };
   const PENALTY = 30;
   const STORE = 'sudoku-practice-v1';
+  const APP_VERSION = '1.2.0';
+  const PATCH_NOTES = [
+    { v: '1.2.0', date: '2026-10-27', items: [
+      '처음 화면을 추가했습니다. 제목이나 홈 버튼을 누르면 돌아옵니다. 이어 하기, 새 게임, 같이 하기, 리더보드, 기법, 도움말, 패치노트로 바로 갈 수 있습니다.',
+      '도움말과 패치노트를 추가했습니다.',
+      '대전과 협동 기록도 리더보드에 올라갑니다. 리더보드에서 혼자 · 대전 · 협동을 골라 볼 수 있습니다.',
+      '대전은 완성한 사람마다 자기 기록이, 협동은 방장이 팀 기록(참가자 이름 모두)이 자동으로 등록됩니다.',
+      '같이 하기 창을 열거나 방에서 시작을 기다리는 동안 혼자 풀던 문제의 시간이 멈춥니다.',
+      '같이 하기 창이 열려 있거나 시작 카운트다운 중에는 새 문제 확인 창처럼 판을 흐리게 가립니다.',
+      '협동에서 정답 숫자, 힌트, 힌트 개수, 실수가 모두에게 공유되는지 확인했습니다.',
+      '방 코드 복사는 이제 6자리 코드만 복사합니다.',
+      '방은 마지막 사람이 나갈 때까지 유지되고, 같은 코드로 다시 들어올 수 있습니다. 새로고침해도 다시 접속하고 진행 상황이 돌아옵니다.',
+      '방 참가자 목록이 들어오고 나가는 대로 바로 바뀝니다.',
+      '이름을 Chan\'s SUDOKU로 바꿨습니다.',
+    ] },
+    { v: '1.1.0', date: '2026-10-27', items: [
+      '같이 하기: 대전과 협동 방을 만들 수 있습니다. 최대 4명, 6자리 코드나 링크로 들어옵니다.',
+      '협동: 정답 숫자를 실시간으로 공유하고, 누가 쓴 힌트든 모두의 판에 보여 줍니다. 힌트 개수는 팀이 나눠 씁니다.',
+      'Supabase 온라인 리더보드: 로그인 없이 등록하고 이름을 바꿀 수 있습니다.',
+      '난이도를 고르면 바로 새 문제를 시작합니다.',
+    ] },
+    { v: '1.0.0', date: '2026-10-27', items: [
+      '첫 공개: 8단계 난이도 문제 생성, 판 위에 선으로 보여 주는 기법 힌트, 기법 도감.',
+      '즉시 확인 / 다 채우고 채점, 기회 3번, 힌트 3회 설정, 메모와 후보 채우기, 다크 모드.',
+    ] },
+  ];
   const $ = id => document.getElementById(id);
   const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const cells = [];
@@ -1773,8 +1927,9 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     closeModal();
     modalReturn = document.activeElement;
     openModalId = id; $(id).hidden = false;
-    document.body.classList.toggle('paused', id === 'confirmModal');
-    if (id === 'lbModal') { if (S) lbLevel = S.level; renderLb(); refreshLb(); }
+    syncPause();
+    if (id === 'lbModal') { if (S) { lbLevel = S.level; if (S.room) lbPlay = S.room.mode; } renderLb(); refreshLb(); }
+    if (id === 'notesModal') { renderNotes(); lsSet('-seenVer', APP_VERSION); $('hmNotesDot').hidden = true; }
     if (id === 'roomModal') renderRoomModal();
     if (id === 'techModal') renderTech();
     if (id === 'settingsModal') { renderLevels(); render(); $('userName').value = userName(); $('nameMsg').textContent = '리더보드에 이 이름으로 기록됩니다.'; }
@@ -1785,15 +1940,83 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (!openModalId) return;
     if (openModalId === 'confirmModal' && confirmAction) { confirmAction = null; const c = confirmCancel; confirmCancel = null; if (c) setTimeout(c, 0); }
     $(openModalId).hidden = true; openModalId = null;
-    document.body.classList.remove('paused');
+    syncPause();
     if (modalReturn && modalReturn.focus) modalReturn.focus({ preventScroll: true });
   }
-  for (const id of ['settingsModal', 'lbModal', 'techModal', 'confirmModal', 'roomModal']) {
+  for (const id of ['settingsModal', 'lbModal', 'techModal', 'confirmModal', 'roomModal', 'helpModal', 'notesModal']) {
     $(id).addEventListener('click', e => { if (e.target.id === id || e.target.closest('[data-close]')) closeModal(); });
   }
   $('settingsBtn').onclick = () => openModal('settingsModal');
   $('lbBtn').onclick = () => openModal('lbModal');
   $('techBtn').onclick = () => openModal('techModal');
+
+  // ---------- pause: the solo clock stops while confirming, while the room popup is open and while waiting in a room ----------
+  // room games keep their shared clock, so only a solo board is paused (and blurred, so it can't be solved off the clock)
+  const inLobby = () => !!room && !(S && S.room);
+  function soloPaused() {
+    return homeOpen || openModalId === 'confirmModal' || openModalId === 'roomModal' || inLobby();
+  }
+  // the board is hidden whenever the room popup is open or a room game is counting down, like the new-problem confirm
+  let countingDown = false;
+  function syncPause() {
+    document.body.classList.toggle('paused', openModalId === 'roomModal' || countingDown || (!(S && S.room) && soloPaused()));
+  }
+
+  // ---------- home screen, help, patch notes ----------
+  let homeOpen = false;
+  const hmLevel = $('hmLevel');
+  for (let L = 1; L <= 8; L++) {
+    const o = document.createElement('option');
+    o.value = L; o.textContent = `${L}단계 · ${C.LEVELS[L]}`;
+    hmLevel.appendChild(o);
+  }
+  function showHome() {
+    closeModal();
+    homeOpen = true; $('home').hidden = false;
+    const cont = $('hmContinue');
+    if (S && S.room) { cont.hidden = false; cont.firstChild.textContent = '방으로 돌아가기 '; $('hmContinueInfo').textContent = `${room ? room.code : ''}`; }
+    else {
+      cont.hidden = !(S && !S.done && !S.over);
+      cont.firstChild.textContent = '이어 하기 ';
+      $('hmContinueInfo').textContent = S ? `${C.LEVELS[S.level]} · ${fmtTime(S.elapsed)}` : '';
+    }
+    hmLevel.value = pickedLevel;
+    $('hmNotesDot').hidden = lsGet('-seenVer', '') === APP_VERSION;
+    syncPause();
+    (cont.hidden ? $('hmNew') : cont).focus({ preventScroll: true });
+  }
+  function hideHome() {
+    if (!homeOpen) return;
+    homeOpen = false; $('home').hidden = true;
+    syncPause();
+    board.focus({ preventScroll: true });
+  }
+  $('homeBtn').onclick = showHome;
+  document.querySelector('.top h1').addEventListener('click', showHome);
+  document.querySelector('.top h1').title = '처음 화면';
+  $('hmContinue').onclick = hideHome;
+  $('hmNew').onclick = () => {
+    hideHome();
+    if (room) { roomInfo('같이 하기 중에는 방 정보에서 새 판을 시작합니다.'); return; }
+    const prev = pickedLevel;
+    pickedLevel = +hmLevel.value; renderLevels(); setTimeout(schedule, 0);
+    confirmCancel = () => { pickedLevel = prev; renderLevels(); };
+    askNew();
+  };
+  $('hmRoom').onclick = () => { hideHome(); $('roomBtn').onclick(); };
+  $('hmLb').onclick = () => openModal('lbModal');
+  $('hmTech').onclick = () => openModal('techModal');
+  $('hmHelp').onclick = () => openModal('helpModal');
+  $('hmNotes').onclick = () => openModal('notesModal');
+  $('hmSettings').onclick = () => openModal('settingsModal');
+  $('verTag').textContent = 'v' + APP_VERSION;
+  $('hmVer').textContent = 'v' + APP_VERSION;
+  $('helpVer').textContent = `Chan's SUDOKU v${APP_VERSION}`;
+  function renderNotes() {
+    $('notesBody').innerHTML = PATCH_NOTES.map((n, k) => `<section class="note-ver">
+      <h3>v${esc(n.v)}${k === 0 ? '<span class="new">최신</span>' : ''}<small>${esc(n.date)}</small></h3>
+      <ul>${n.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>`).join('');
+  }
 
   // ---------- technique guide ----------
   const TIERS = [
@@ -2001,7 +2224,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     S.history.push({ v: S.values.slice(), n: S.notes.slice(), m: S.marks.slice(), co: !!S.candOn });
     if (S.history.length > 300) S.history.shift();
   }
-  const playing = () => S && !S.done && !S.over;
+  const playing = () => S && !S.done && !S.over && !inLobby();
   function select(i) { if (!S) return; S.sel = i; render(); roomCursor(); }
   function editable() { return playing() && S.sel >= 0 && !S.puzzle[S.sel]; }
   function clearMark(i) { if (S.marks.length) S.marks = S.marks.filter(k => k !== i); }
@@ -2835,6 +3058,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   window.addEventListener('blur', () => { shiftDown = false; });
   document.addEventListener('keydown', e => {
     if (openModalId) { if (e.key === 'Escape') closeModal(); return; }
+    if (homeOpen) { if (e.key === 'Escape' && !$('hmContinue').hidden) hideHome(); return; }
     if (typing(e.target)) return;
     if (e.key === 'Shift') { if (!e.repeat) { shiftDown = true; shiftUsed = false; } return; }
     if (shiftDown) shiftUsed = true;
@@ -2858,7 +3082,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 
   setInterval(() => {
     if (S && S.room && !S.done) { S.elapsed = Math.max(0, Math.floor((Date.now() - S.room.startAt) / 1000)); $('timer').textContent = fmtTime(S.elapsed); return; }
-    if (!S || S.done || S.over || generating || document.hidden || openModalId === 'confirmModal') return;
+    if (!S || S.done || S.over || generating || document.hidden || soloPaused()) return;
     S.elapsed++;
     $('timer').textContent = fmtTime(S.elapsed);
     if (S.elapsed % 5 === 0) save();
@@ -2906,7 +3130,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   };
 
   // ---------- leaderboard ----------
-  let lbReady = false, lbRows = [], lbLevel = 3, lbError = '';
+  let lbReady = false, lbRows = [], lbLevel = 3, lbError = '', lbPlay = 'solo';
   const guestName = () => 'guest-' + Math.random().toString(36).slice(2, 6).padEnd(4, '0');
   let memName = null;
   function userName() {
@@ -2939,23 +3163,27 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (S.hints) extra.push(`힌트 ${S.hints}회`);
     if (S.mistakes) extra.push(`실수 ${S.mistakes}번`);
     const line = `<div class="stat">기록 ${fmtTime(scoreOf(S))}${extra.length ? ` <span class="sub">(시간 ${fmtTime(S.elapsed)} + ${extra.join(' + ')})</span>` : ''}</div>`;
-    if (S.noLb) return line + `<div class="lb-msg">같이 하기로 푼 문제는 리더보드에 올라가지 않습니다.</div>`;
     if (S.submitted) return line + `<div class="lb-msg ok">리더보드에 등록했습니다.</div>`;
+    if (S.noLb) return line + `<div class="lb-msg">같이 하기 판은 방 안에서 완성했을 때만 자동으로 등록됩니다.</div>`;
     if (S.elapsed < 20) return line + `<div class="lb-msg">20초 미만 기록은 등록하지 않습니다.</div>`;
     return line + `<form class="lb-form" id="lbForm" autocomplete="off">
       <input id="nick" name="nick" maxlength="16" placeholder="이름 (최대 16자)" required aria-label="리더보드에 표시할 이름">
       <button class="btn-primary" type="submit" id="lbSubmit">기록 등록</button>
     </form><div class="lb-msg" id="lbMsg"></div>`;
   }
-  // rows → [{ id, name, best: {level: record}, solved: {level: n} }]
+  // rows → [{ id, play, name, best: {level: record}, solved: {level: n} }]
+  // solo and versus records belong to a player; co-op records belong to the team (its member names)
+  const playOf = r => r.play === 'versus' || r.play === 'coop' ? r.play : 'solo';
   function groupRows(raw) {
     const by = new Map();
     for (const r of raw) {
-      const L = Number(r.level);
+      const L = Number(r && r.level);
       if (!r || !(L >= 1 && L <= 8) || !Number.isFinite(Number(r.score))) continue;
-      let p = by.get(r.player_public);
-      if (!p) { p = { id: r.player_public, name: String(r.name || '').trim().slice(0, 16) || '이름 없음', best: {}, solved: {} }; by.set(r.player_public, p); }
-      const rec = { score: +r.score, t: +r.t, hints: +r.hints || 0, mistakes: +r.mistakes || 0, mode: r.mode, lives: +r.lives || 0, hintLimit: +r.hint_limit || 0, at: r.created_at || '' };
+      const play = playOf(r), team = play === 'coop' ? String(r.team || '').trim().slice(0, 80) : '';
+      const key = play + ':' + (team || r.player_public);
+      let p = by.get(key);
+      if (!p) { p = { id: r.player_public, play, name: team || String(r.name || '').trim().slice(0, 16) || '이름 없음', best: {}, solved: {} }; by.set(key, p); }
+      const rec = { score: +r.score, t: +r.t, hints: +r.hints || 0, mistakes: +r.mistakes || 0, mode: r.mode, lives: +r.lives || 0, hintLimit: +r.hint_limit || 0, players: +r.players || 0, at: r.created_at || '' };
       if (!p.best[L] || rec.score < p.best[L].score) p.best[L] = rec;
       p.solved[L] = r.solved != null ? Number(r.solved) : (p.solved[L] || 0) + 1;
     }
@@ -2973,7 +3201,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (!name) { msg.className = 'lb-msg err'; msg.textContent = '이름을 입력해 주세요.'; return; }
     btn.disabled = true; msg.className = 'lb-msg'; msg.textContent = '등록하는 중…';
     storeName(name);
-    const mine = lbRows.find(r => r.id === ME.pub);
+    const mine = lbRows.find(r => r.id === ME.pub && r.play === 'solo');
     const prev = mine && mine.best[S.level];
     const score = scoreOf(S);
     try {
@@ -2998,9 +3226,18 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     b.addEventListener('click', () => { lbLevel = L; renderLb(); });
     lbTabs.appendChild(b);
   }
+  for (const b of $('lbPlay').children) b.addEventListener('click', () => { lbPlay = b.dataset.v; renderLb(); });
+  const LB_NOTES = {
+    solo: '혼자 푼 기록 · 난이도별 개인 최고 기록 · 기록 = 풀이 시간 + (힌트 + 실수) × 30초',
+    versus: '대전에서 완성한 각자의 기록 · 난이도별 개인 최고 기록 · 기록 = 풀이 시간 + (힌트 + 실수) × 30초',
+    coop: '협동으로 함께 완성한 팀 기록 · 난이도별 팀 최고 기록 · 힌트와 실수는 팀 전체 합계',
+  };
   function renderLb() {
+    for (const b of $('lbPlay').children) b.setAttribute('aria-checked', b.dataset.v === lbPlay);
+    $('lbNote').textContent = LB_NOTES[lbPlay];
+    const mineRows = lbRows.filter(r => r.play === lbPlay);
     const counts = {};
-    for (const r of lbRows) for (const L in r.best) counts[L] = (counts[L] || 0) + 1;
+    for (const r of mineRows) for (const L in r.best) counts[L] = (counts[L] || 0) + 1;
     for (const b of lbTabs.children) {
       const L = +b.dataset.l;
       b.setAttribute('aria-selected', L === lbLevel);
@@ -3010,12 +3247,14 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     const body = $('lbBody');
     if (!lbReady) { body.innerHTML = '<div class="lb-empty">리더보드를 불러오는 중…</div>'; return; }
     if (lbError) { body.innerHTML = `<div class="lb-empty">${esc(lbError)}</div>`; return; }
-    const rows = lbRows.filter(r => r.best[lbLevel]).sort((a, b) => a.best[lbLevel].score - b.best[lbLevel].score || String(a.best[lbLevel].at).localeCompare(String(b.best[lbLevel].at)));
+    const rows = mineRows.filter(r => r.best[lbLevel]).sort((a, b) => a.best[lbLevel].score - b.best[lbLevel].score || String(a.best[lbLevel].at).localeCompare(String(b.best[lbLevel].at)));
     if (!rows.length) { body.innerHTML = `<div class="lb-empty">${C.LEVELS[lbLevel]} 기록이 아직 없습니다. 이 난이도를 완성하고 첫 기록을 남겨 보세요.</div>`; return; }
     const date = s => { const d = new Date(s); return isNaN(d) ? '' : `${d.getMonth() + 1}/${d.getDate()}`; };
-    const modeTag = b => (b.mode === 'grade' ? '채점' : b.mode === 'instant' ? (b.lives ? '즉시·3번' : '즉시·무제한') : '—') + (b.hintLimit ? ' · 힌트3' : '');
+    const modeTag = lbPlay !== 'solo'
+      ? b => `${b.players ? b.players + '명' : '—'} · ${b.hintLimit ? '힌트 ' + b.hintLimit : '힌트 없음'}`
+      : b => (b.mode === 'grade' ? '채점' : b.mode === 'instant' ? (b.lives ? '즉시·3번' : '즉시·무제한') : '—') + (b.hintLimit ? ' · 힌트3' : '');
     body.innerHTML = `<div class="lb-scroll"><table>
-      <thead><tr><th>순위</th><th>이름</th><th>기록</th><th>시간 · 힌트 · 실수</th><th>모드</th><th>완성</th><th>날짜</th></tr></thead>
+      <thead><tr><th>순위</th><th>${lbPlay === 'coop' ? '팀' : '이름'}</th><th>기록</th><th>시간 · 힌트 · 실수</th><th>${lbPlay === 'solo' ? '모드' : '방'}</th><th>완성</th><th>날짜</th></tr></thead>
       <tbody>${rows.slice(0, 50).map((r, k) => {
         const b = r.best[lbLevel];
         return `<tr class="${k === 0 ? 'top1' : ''} ${r.id === ME.pub ? 'me' : ''}">
@@ -3102,7 +3341,16 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   }
   function track() { if (room) room.net.track(myPresence()); }
   function roomCursor() { if (room && S && S.room && S.room.mode === 'coop') track(); else if (room) track(); }
-  function roomProgress() { if (room && S && S.room) { track(); renderRoomBar(); } }
+  function roomProgress() { if (room && S && S.room) { track(); renderRoomBar(); rememberRoom(); } }
+  // last room: code + setup, and my own board for its current game (versus progress isn't shared, so it comes back from here)
+  function rememberRoom() {
+    if (!room) return;
+    const g = S && S.room && S.room.code === room.code ? { gameId: S.room.gameId, puzzle: S.puzzle, level: S.level, mode: S.room.mode, roomHints: S.room.hints, startAt: S.room.startAt, seed: S.seed, values: S.values, notes: S.notes, mistakes: S.mistakes, hints: S.hints,
+      done: S.done, elapsed: S.elapsed, submitted: !!S.submitted, lbState: S.lbState || null } : null;
+    const prev = lsGet('-lastRoom', null);
+    lsSet('-lastRoom', { code: room.code, cfg: room.cfg || (prev && prev.code === room.code ? prev.cfg : null), game: g || (prev && prev.code === room.code ? prev.game : null), left: false, at: Date.now() });
+  }
+  const lastRoom = () => { const r = lsGet('-lastRoom', null); return r && ROOM_RE.test(r.code) && Date.now() - (r.at || 0) < 864e5 ? r : null; };
   function roomSendSet(i, d) { if (room && S && S.room && S.room.mode === 'coop') room.net.send({ t: 'set', gameId: S.room.gameId, i, d }); }
   // co-op: the hint itself (step, candidates it was found with) goes to everyone
   function roomSendHint() {
@@ -3128,21 +3376,32 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     track();
     try { history.replaceState(null, '', '?room=' + code); } catch (e) {}
     if (!cfg) room.lostTimer = setTimeout(() => {
-      if (room && room.code === code && !room.cfg) { leaveRoom(true); renderRoomModal(); roomInfo('방을 찾지 못했습니다. 코드를 확인해 주세요.'); }
+      if (!room || room.code !== code || room.cfg) return;
+      const last = lastRoom();
+      if (last && last.code === code && last.cfg && !last.left && room.players.every(p => p.id === RID)) {
+        room.cfg = sanitizeCfg(last.cfg);
+        const g = last.game;
+        if (g && typeof g.gameId === 'string' && validPuzzle(g.puzzle))
+          startRoomGame({ gameId: g.gameId, puzzle: g.puzzle, level: g.level, mode: g.mode, hints: g.roomHints, startAt: g.startAt, seed: g.seed });
+        rememberRoom(); renderRoomModal(); renderRoomBar(); roomInfo('방에 다시 들어왔습니다.'); return;
+      }
+      leaveRoom(true); renderRoomModal(); roomInfo('방을 찾지 못했습니다. 모두 나가면 방이 사라집니다.');
     }, 7000);
-    renderRoomModal(); renderRoomBar();
+    else rememberRoom();
+    renderRoomModal(); renderRoomBar(); syncPause();
   }
   function leaveRoom(quiet) {
     if (!room) return;
-    clearTimeout(room.lostTimer); clearInterval(room.syncTimer); clearInterval(room.cdTimer);
+    if (!quiet) { const last = lastRoom(); if (last && last.code === room.code) lsSet('-lastRoom', { ...last, left: true }); }
+    clearTimeout(room.lostTimer); clearInterval(room.syncTimer); clearInterval(room.cdTimer); countingDown = false;
     try { room.net.leave(); } catch (e) {}
     room = null; peerCursors = new Map();
     if (S && S.room) { S.room = null; S.noLb = true; save(); }
     try { history.replaceState(null, '', location.pathname); } catch (e) {}
-    renderRoomBar(); if (S) render();
+    renderRoomBar(); syncPause(); if (S) render();
     if (!quiet) { renderRoomModal(); roomInfo('방에서 나왔습니다.'); }
   }
-  window.addEventListener('pagehide', () => leaveRoom(true));
+  window.addEventListener('pagehide', () => { rememberRoom(); leaveRoom(true); });
 
   function onRoomPeers(list) {
     if (!room) return;
@@ -3161,7 +3420,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
         if (S && S.room && S.room.gameId === room.gameId) room.net.send(syncMsg());
       }
     }
-    for (const p of room.players) room.seen.add(p.id);
+    room.seen = new Set(room.players.map(p => p.id));
     // versus: announce finishers
     if (S && S.room && S.room.mode === 'versus') for (const p of room.players) {
       const key = p.id + ':' + S.room.gameId;
@@ -3171,6 +3430,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
       }
     }
     renderRoomBar(); renderRoomModal();
+    if (S && S.room && S.done && S.room.mode === 'coop' && isHost() && S.lbState === 'wait') { S.lbState = null; roomSubmit(); }
     if (S && S.room) { render(); if (S.done) showRoomWin(); }
   }
 
@@ -3179,7 +3439,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 
   function onRoomMsg(m) {
     if (!room || !m || typeof m !== 'object') return;
-    if (m.t === 'cfg' && m.cfg) { room.cfg = sanitizeCfg(m.cfg); clearTimeout(room.lostTimer); renderRoomModal(); renderRoomBar(); return; }
+    if (m.t === 'cfg' && m.cfg) { room.cfg = sanitizeCfg(m.cfg); clearTimeout(room.lostTimer); rememberRoom(); renderRoomModal(); renderRoomBar(); return; }
     if (m.t === 'start' || m.t === 'sync') {
       if (!validPuzzle(m.puzzle) || typeof m.gameId !== 'string') return;
       clearTimeout(room.lostTimer);
@@ -3189,6 +3449,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     }
     if (!S || !S.room || m.gameId !== S.room.gameId) return;
     if (m.t === 'set' && S.room.mode === 'coop') applyRemoteSet(m.i | 0, m.d | 0);
+    if (m.t === 'lb' && S.room.mode === 'coop') { S.submitted = true; S.lbState = 'ok'; save(); if (S.done) showRoomWin(); }
     if (m.t === 'hint' && S.room.mode === 'coop') {
       S.hints++;
       const step = m.step;
@@ -3206,24 +3467,36 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (!solution) return;
     const mode = m.mode === 'coop' ? 'coop' : 'versus', hints = Math.min(10, Math.max(0, +m.hints || 0)), level = Math.min(8, Math.max(1, +m.level || 3));
     S = freshState({ puzzle, solution, clues: puzzle.filter(Boolean).length, seed: +m.seed || 0, used: null }, level);
-    Object.assign(S, { mode: 'instant', lives: 0, hintLimit: hints > 0 ? hints : -1, noLb: true,
+    Object.assign(S, { mode: 'instant', lives: 0, hintLimit: hints > 0 ? hints : -1, lbState: null,
       room: { code: room.code, mode, gameId: m.gameId, startAt: +m.startAt || Date.now(), hints } });
     S.elapsed = Math.max(0, Math.floor((Date.now() - S.room.startAt) / 1000));
+    const last = lastRoom(), g = last && last.code === room.code && last.game;
+    if (g && g.gameId === m.gameId && Array.isArray(g.values) && g.values.length === 81) {
+      for (let i = 0; i < 81; i++) if (!puzzle[i]) { const d = g.values[i] | 0; if (d >= 0 && d <= 9) S.values[i] = d; }
+      if (Array.isArray(g.notes) && g.notes.length === 81) S.notes = g.notes.map(x => x & 0x1ff);
+      S.mistakes = +g.mistakes || 0; S.hints = +g.hints || 0;
+      S.submitted = !!g.submitted; S.lbState = g.lbState === 'ok' || g.lbState === 'short' ? g.lbState : null;
+      if (S.values.every((v, i) => v === solution[i])) { S.done = true; S.elapsed = +g.elapsed || S.elapsed; }
+    }
     room.phase = 'playing'; room.gameId = m.gameId;
     pickedLevel = level;
     if (candMode) setCandMode(false);
     hideOverlay(); if (openModalId === 'roomModal') closeModal();
-    save(); render(); renderLevels(); track(); renderRoomBar();
+    if (homeOpen) hideHome();
+    save(); render(); renderLevels(); track(); renderRoomBar(); syncPause();
     clearInterval(room.syncTimer);
     if (mode === 'coop') room.syncTimer = setInterval(() => { if (room && isHost() && S && S.room && !S.done) room.net.send(syncMsg()); }, 5000);
     // short countdown so everyone starts together
-    clearInterval(room.cdTimer);
+    clearInterval(room.cdTimer); countingDown = false; syncPause();
     const tick = () => {
       const left = Math.ceil((S.room.startAt - Date.now()) / 1000);
       if (left > 0) showOverlay(`<div class="card"><h2>${left}</h2><p>${modeName(mode)} · ${C.LEVELS[level]} · 곧 시작합니다</p></div>`);
       else { clearInterval(room.cdTimer); hideOverlay(); }
+      if (countingDown !== left > 0) { countingDown = left > 0; syncPause(); }
     };
     if (S.room.startAt > Date.now()) { tick(); room.cdTimer = setInterval(tick, 200); }
+    rememberRoom();
+    if (S.done) showRoomWin();
   }
 
   function applyRemoteSet(i, d) {
@@ -3267,13 +3540,49 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     else hostStart();
   }
 
+  // versus: each finisher registers their own time; co-op: the host registers the team's time once
+  async function roomSubmit() {
+    const st = S;
+    if (!room || !st || !st.room || !st.done || st.submitted || st.lbState) return;
+    const coop = st.room.mode === 'coop';
+    if (coop && !isHost()) { st.lbState = 'wait'; return; }
+    if (st.elapsed < 20) { st.lbState = 'short'; return; }
+    st.lbState = 'sending';
+    const names = room.players.map(p => String(p.name || '이름 없음').slice(0, 16));
+    const row = { name: userName(), level: st.level, score: scoreOf(st), t: st.elapsed, hints: st.hints, mistakes: st.mistakes, mode: 'instant', lives: 0,
+      hint_limit: Math.max(0, st.room.hints), seed: st.seed, play: st.room.mode, team: coop ? names.join(', ').slice(0, 80) : null, players: Math.max(1, Math.min(4, names.length)) };
+    try {
+      await LB.add(row);
+      st.submitted = true; st.lbState = 'ok';
+      if (coop && room && S === st) room.net.send({ t: 'lb', gameId: st.room.gameId });
+    } catch (e) { st.lbState = 'err'; }
+    if (S === st) { save(); rememberRoom(); if (st.room && st.done) showRoomWin(); }
+    refreshLb();
+  }
+  function roomLbHtml() {
+    const coop = S.room.mode === 'coop', extra = [];
+    if (S.hints) extra.push(`힌트 ${S.hints}회`);
+    if (S.mistakes) extra.push(`실수 ${S.mistakes}번`);
+    const line = `<div class="stat">${coop ? '팀 기록' : '내 기록'} ${fmtTime(scoreOf(S))}${extra.length ? ` <span class="sub">(시간 ${fmtTime(S.elapsed)} + ${extra.join(' + ')})</span>` : ''}</div>`;
+    const st = S.submitted ? 'ok' : S.lbState;
+    const msg = {
+      ok: coop ? '팀 기록을 리더보드에 등록했습니다.' : '리더보드에 등록했습니다.',
+      sending: '리더보드에 등록하는 중…',
+      short: '20초 미만 기록은 리더보드에 등록하지 않습니다.',
+      wait: '방장이 팀 기록을 리더보드에 등록합니다.',
+      err: '리더보드에 등록하지 못했습니다.',
+    }[st] || '';
+    return line + `<div class="lb-msg ${st === 'ok' ? 'ok' : st === 'err' ? 'err' : ''}">${msg}${st === 'err' ? ' <button class="btn-ghost sm" type="button" data-act="roomLbRetry">다시 시도</button>' : ''}</div>`;
+  }
   function showRoomWin() {
     if (!S || !S.room) return;
+    roomSubmit();
     const names = room ? room.players.map(p => esc(p.name || '이름 없음')).join(', ') : '';
     const next = room && isHost() ? '<button class="btn-primary" type="button" data-act="roomNext">새 판</button>' : '';
     if (S.room.mode === 'coop') {
       showOverlay(`<div class="card"><h2>함께 완성</h2>
         <div class="stat">${C.LEVELS[S.level]} · ${fmtTime(S.elapsed)} · 실수 ${S.mistakes} · 힌트 ${S.hints}</div>
+        ${roomLbHtml()}
         <p>${names} 님이 함께 풀었습니다.${room && !isHost() ? '<br>새 판은 방장이 시작합니다.' : ''}</p>
         <div class="row">${next}<button class="btn-ghost" type="button" data-act="roomLeave">방 나가기</button></div></div>`);
       return;
@@ -3289,7 +3598,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     });
     const myRank = rows.findIndex(r => r.mine) + 1;
     showOverlay(`<div class="card"><h2>${myRank === 1 ? '승리' : myRank + '등'}</h2>
-      <div class="stat">${C.LEVELS[S.level]} · 내 기록 ${fmtTime(S.elapsed)} · 실수 ${S.mistakes}</div>
+      <div class="stat">${C.LEVELS[S.level]} · 완성 ${fmtTime(S.elapsed)} · 실수 ${S.mistakes}</div>
+      ${roomLbHtml()}
       <ol class="rank-list">${rows.map(r => `<li class="${r.mine ? 'me' : ''}"><span>${esc(r.name)}</span><b>${r.pr && r.pr.doneAt != null ? fmtTime(r.pr.doneAt) : r.pr ? `${r.pr.filled}/${r.pr.total}칸` : '—'}</b></li>`).join('')}</ol>
       <div class="row">${next}<button class="btn-ghost" type="button" data-act="roomLeave">방 나가기</button></div></div>`);
   }
@@ -3298,6 +3608,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (!a) return;
     if (a.dataset.act === 'roomNext') roomNewGame();
     if (a.dataset.act === 'roomLeave') { hideOverlay(); leaveRoom(); }
+    if (a.dataset.act === 'roomLbRetry' && S && S.room) { S.lbState = null; roomSubmit(); showRoomWin(); }
   });
 
   // ---------- room bar above the board ----------
@@ -3353,7 +3664,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
         <section class="set-sec"><h3>참가하기</h3>
           <div class="name-row"><input id="rmCode" maxlength="6" placeholder="방 코드 6자리" autocomplete="off" autocapitalize="characters" aria-label="방 코드">
           <button class="btn-ghost" type="button" id="rmJoin">참가</button></div>
-          <p class="set-desc" id="rmJoinMsg">친구에게 받은 링크로 들어와도 됩니다. 한 방에 최대 4명까지 들어갈 수 있습니다.</p></section>`;
+          <p class="set-desc" id="rmJoinMsg">친구에게 받은 링크로 들어와도 됩니다. 한 방에 최대 4명까지 들어갈 수 있습니다.</p>
+          ${lastRoom() ? `<div><button class="btn-ghost" type="button" id="rmRejoin">최근 방 ${lastRoom().code} 다시 들어가기</button></div>` : ''}</section>`;
       wireCfg('rm', draftCfg, renderRoomModal);
       $('rmCreate').onclick = () => joinRoom(newCode(), { ...draftCfg });
       const join = () => {
@@ -3362,6 +3674,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
         joinRoom(code, null);
       };
       $('rmJoin').onclick = join;
+      if ($('rmRejoin')) $('rmRejoin').onclick = () => { const last = lastRoom(); if (last) joinRoom(last.code, null); };
       $('rmCode').onkeydown = e => { if (e.key === 'Enter') join(); };
       return;
     }
@@ -3375,18 +3688,19 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (host && room.cfg) action = room.starting ? '<button class="btn-primary" type="button" disabled>문제 만드는 중…</button>'
       : `<button class="btn-primary" type="button" id="rmStart">${playing ? '새 판 시작' : '시작'}</button>`;
     else if (room.cfg) action = `<span class="set-desc">${playing ? '게임 중입니다.' : '방장이 시작하면 바로 시작됩니다.'}</span>`;
-    body.innerHTML = `<div class="rm-code"><div><span>방 코드</span><b>${room.code}</b></div><button class="btn-ghost" type="button" id="rmCopy">링크 복사</button></div>
-      <p class="set-desc" id="rmCopyMsg">${esc(roomLink(room.code))}</p>
+    body.innerHTML = `<div class="rm-code"><div><span>방 코드</span><b>${room.code}</b></div><button class="btn-ghost" type="button" id="rmCopy">코드 복사</button></div>
+      <p class="set-desc" id="rmCopyMsg">친구는 <b>같이 하기 → 참가하기</b>에 이 코드를 넣거나 링크로 들어옵니다: ${esc(roomLink(room.code))}<br>방은 마지막 사람이 나갈 때까지 유지되고, 같은 코드로 다시 들어올 수 있습니다.</p>
       <section class="set-sec"><h3>참가자 ${room.players.length}/${MAX_PLAYERS}</h3><ul class="rm-players">${list}</ul></section>
       <section class="set-sec"><h3>설정</h3>${cfgHtml}</section>
       <div class="cf-row"><button class="btn-ghost" type="button" id="rmLeave">방 나가기</button>${action}</div>`;
-    if (host && room.cfg) wireCfg('rc', room.cfg, () => { room.net.send({ t: 'cfg', cfg: room.cfg }); renderRoomModal(); renderRoomBar(); });
+    if (host && room.cfg) wireCfg('rc', room.cfg, () => { room.net.send({ t: 'cfg', cfg: room.cfg }); rememberRoom(); renderRoomModal(); renderRoomBar(); });
     $('rmLeave').onclick = () => leaveRoom();
     if ($('rmStart')) $('rmStart').onclick = () => (playing ? roomNewGame() : hostStart());
     $('rmCopy').onclick = () => {
-      const link = roomLink(room.code), msg = $('rmCopyMsg');
-      const done = () => { msg.textContent = '링크를 복사했습니다. 친구에게 보내 주세요.'; };
-      try { navigator.clipboard.writeText(link).then(done, () => selectText(msg)); } catch (e) { selectText(msg); }
+      const code = room.code, msg = $('rmCopyMsg');
+      const done = () => { msg.textContent = `방 코드 ${code}를 복사했습니다. 친구에게 보내 주세요.`; };
+      const manual = () => { msg.innerHTML = `복사하지 못했습니다. 코드를 직접 알려 주세요: <b id="rmCodeText">${code}</b>`; selectText($('rmCodeText')); };
+      try { navigator.clipboard.writeText(code).then(done, manual); } catch (e) { manual(); }
     };
   }
   function selectText(el) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
@@ -3397,6 +3711,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     try { code = new URLSearchParams(location.search).get('room'); } catch (e) {}
     if (S && S.room) { S.room = null; S.noLb = true; save(); render(); } // a reload ends the previous room game
     if (code && ROOM_RE.test(code.toUpperCase())) { joinRoom(code.toUpperCase(), null); openModal('roomModal'); }
+    else showHome();
   }
 
   window.__sudokuState = () => S; // read-only peek for tests
