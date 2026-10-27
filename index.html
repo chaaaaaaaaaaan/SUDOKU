@@ -2362,9 +2362,9 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
       render(); return;
     }
     S.hints++;
-    roomSendHint();
     S.hint = { step, cand, usedNotes, blockers: [...blockersFor(step, S.values)] };
     S.panel = { type: 'hint' };
+    roomSendHint();
     save(); render();
   }
   function applyHint() {
@@ -2436,7 +2436,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     const h = S.hint; if (!h) { el.hidden = true; return; }
     const s = h.step, t = describe(s, h.cand);
     el.className = 'panel hint';
-    el.innerHTML = `<div class="p-head"><span class="chip-sm">${TECH_TIER[s.level]}</span><b>${C.TECH_NAMES[s.tech]}</b>${h.usedNotes ? '<span class="p-note">내 메모 기준</span>' : ''}${close}</div>
+    el.innerHTML = `<div class="p-head"><span class="chip-sm">${TECH_TIER[s.level]}</span><b>${C.TECH_NAMES[s.tech]}</b>${h.from ? `<span class="p-note">${esc(h.from)} 님의 힌트</span>` : h.usedNotes ? '<span class="p-note">내 메모 기준</span>' : ''}${close}</div>
       <ol class="p-steps">${t.steps.map(x => `<li>${linkRefs(x)}</li>`).join('')}</ol>
       <div class="p-result">→ ${linkRefs(t.result)}</div>
       <div class="p-act"><button class="btn-hint" type="button" data-p="apply">${s.place ? '숫자 넣기' : '메모에 적용'}<span class="key-hint">Enter</span></button></div>`;
@@ -3104,7 +3104,11 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   function roomCursor() { if (room && S && S.room && S.room.mode === 'coop') track(); else if (room) track(); }
   function roomProgress() { if (room && S && S.room) { track(); renderRoomBar(); } }
   function roomSendSet(i, d) { if (room && S && S.room && S.room.mode === 'coop') room.net.send({ t: 'set', gameId: S.room.gameId, i, d }); }
-  function roomSendHint() { if (room && S && S.room && S.room.mode === 'coop') room.net.send({ t: 'hint', gameId: S.room.gameId }); }
+  // co-op: the hint itself (step, candidates it was found with) goes to everyone
+  function roomSendHint() {
+    if (!(room && S && S.room && S.room.mode === 'coop' && S.hint)) return;
+    room.net.send({ t: 'hint', gameId: S.room.gameId, from: userName(), step: S.hint.step, cand: Array.from(S.hint.cand) });
+  }
 
   // ---------- toast ----------
   const toast = document.createElement('div');
@@ -3185,7 +3189,16 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     }
     if (!S || !S.room || m.gameId !== S.room.gameId) return;
     if (m.t === 'set' && S.room.mode === 'coop') applyRemoteSet(m.i | 0, m.d | 0);
-    if (m.t === 'hint' && S.room.mode === 'coop') { S.hints++; save(); render(); }
+    if (m.t === 'hint' && S.room.mode === 'coop') {
+      S.hints++;
+      const step = m.step;
+      if (step && typeof step === 'object' && typeof step.tech === 'string' && C.TECH_NAMES[step.tech] && Array.isArray(m.cand) && m.cand.length === 81
+          && Array.isArray(step.elims) && Array.isArray(step.cells) && Array.isArray(step.units)) {
+        S.hint = { step, cand: m.cand.map(x => x | 0), usedNotes: false, from: String(m.from || '').slice(0, 16) || '팀원', blockers: [...blockersFor(step, S.values)] };
+        S.panel = { type: 'hint' };
+      }
+      save(); render();
+    }
   }
 
   function startRoomGame(m) {
