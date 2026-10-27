@@ -288,6 +288,9 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 .rb-players { display: flex; flex-wrap: wrap; gap: 6px; }
 .pchip { display: inline-grid; grid-template-columns: auto auto auto; align-items: center; column-gap: 6px; row-gap: 3px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; font-size: 12px; min-width: 0; }
 .pchip.me { border-color: var(--accent); }
+.pchip.away, .pchip.lost { opacity: .55; border-style: dashed; }
+.pchip.lost em { color: var(--bad); }
+.rb-head .wait.bad { color: var(--bad); }
 .pchip i { width: 8px; height: 8px; border-radius: 50%; }
 .pchip .pn { font-weight: 600; max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pchip em { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums; grid-column: 1 / -1; }
@@ -303,6 +306,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 .rm-players { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .rm-players li { display: flex; align-items: center; gap: 8px; font-size: 14px; }
 .rm-players i { width: 10px; height: 10px; border-radius: 50%; }
+.rm-players .pst { margin-left: auto; font-size: 12px; color: var(--muted); }
 .set-desc.warn { color: var(--bad); }
 .name-row input#rmCode { text-transform: uppercase; letter-spacing: .12em; }
 .rank-list { margin: 0; padding-left: 22px; text-align: left; display: grid; gap: 4px; font-size: 14px; }
@@ -628,6 +632,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
           <li><b>대전</b>: 같은 문제를 동시에 풀고 먼저 완성한 사람이 이깁니다. 상대의 진행률과 실수만 보입니다.</li>
           <li><b>협동</b>: 한 판을 함께 풉니다. 정답 숫자와 힌트는 모두에게 공유되고, 메모는 각자 따로입니다. 힌트 개수는 팀 전체가 나눠 씁니다.</li>
           <li>방에 들어가 있는 동안(시작 전 대기 포함) 혼자 풀던 문제의 시간은 멈춰 있습니다.</li>
+          <li>참가자 이름 옆에 <b>자리 비움</b>(다른 탭·앱을 보거나 1분 넘게 입력 없음), <b>응답 없음</b>(15초 넘게 신호 없음)이 표시됩니다. 내 연결이 끊기면 방 막대에 <b>연결 끊김 · 다시 연결 중</b>이 보이고 자동으로 다시 접속합니다.</li>
+          <li>방 게임을 하다가 방을 나가면 혼자 풀 새 문제로 바뀝니다.</li>
           <li>방은 마지막 사람이 나갈 때까지 유지됩니다. 같은 코드로 다시 들어오거나, 참가하기의 <b>최근 방 다시 들어가기</b>를 누르세요.</li>
         </ul></section>
       <section><h3>리더보드</h3>
@@ -1769,8 +1775,16 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   const TECH_TIER = { 1: '입문·쉬움', 2: '보통', 3: '어려움', 4: '전문가', 5: '마스터 이상', 6: '마스터 이상' };
   const PENALTY = 30;
   const STORE = 'sudoku-practice-v1';
-  const APP_VERSION = '1.2.0';
+  const APP_VERSION = '1.2.1';
   const PATCH_NOTES = [
+    { v: '1.2.1', date: '2026-10-27', items: [
+      '방 연결이 끊기던 문제를 고쳤습니다. 숫자를 빠르게 넣으면 서버의 접속 상태 갱신 제한에 걸려 방 연결이 끊겼고, 그 뒤로 숫자와 힌트가 오가지 않았으며 새로 들어온 사람은 방을 찾지 못했습니다.',
+      '연결이 끊기면 자동으로 다시 접속하고, 다시 접속하거나 화면으로 돌아오면 놓친 숫자를 받아 옵니다. 늦게 도착한 판이 다른 사람이 넣은 숫자를 지우지 않습니다.',
+      '참가자 상태를 보여 줍니다: 자리 비움(다른 탭·앱을 보거나 1분 넘게 입력 없음), 응답 없음(15초 넘게 신호 없음), 연결 끊김(내 연결이 끊겨 다시 연결 중).',
+      '방 게임을 하다가 방을 나가면 혼자 풀 새 문제로 바뀝니다. 새로고침 뒤 방에 다시 들어가지 않을 때도 새 문제로 시작합니다.',
+      '방 게임 기록 시간을 완성한 순간 기준으로 정확히 잽니다.',
+      '방 정보를 받기 전에는 나에게 방장 표시를 붙이지 않습니다.',
+    ] },
     { v: '1.2.0', date: '2026-10-27', items: [
       '처음 화면을 추가했습니다. 제목이나 홈 버튼을 누르면 돌아옵니다. 이어 하기, 새 게임, 같이 하기, 리더보드, 기법, 도움말, 패치노트로 바로 갈 수 있습니다.',
       '도움말과 패치노트를 추가했습니다.',
@@ -2287,6 +2301,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (valuesChanged) setTimeout(roomProgress, 0);
     if (S.panel && S.panel.type === 'hint') S.panel = null;
     if (S.values.every((v, i) => v === S.solution[i])) {
+      if (S.room) S.elapsed = Math.max(0, Math.floor((Date.now() - S.room.startAt) / 1000)); // the shared clock, at this moment
       S.done = true; S.panel = null; S.marks = [];
       save(); render(); showWin(); return;
     }
@@ -3287,20 +3302,35 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   const sanitizeCfg = c => ({ mode: c && c.mode === 'coop' ? 'coop' : 'versus', level: Math.min(8, Math.max(1, +(c && c.level) || 3)), hints: Math.min(10, Math.max(0, +(c && c.hints) || 0)) });
   const validPuzzle = p => Array.isArray(p) && p.length === 81 && p.every(v => Number.isInteger(v) && v >= 0 && v <= 9);
 
-  function openChannel(code, onMsg, onPeers) {
+  // Presence carries only who is in the room (it is rate limited and the server drops a channel that tracks too often);
+  // cursor, progress and activity travel as ordinary broadcasts. onJoin runs after every (re)join.
+  function openChannel(code, onMsg, onPeers, onJoin, onLink) {
     if (ONLINE) {
-      const ch = sb.channel('sudoku-room-' + code, { config: { presence: { key: RID }, broadcast: { self: false } } });
-      let state = {}, joined = false;
-      ch.on('broadcast', { event: 'm' }, ({ payload }) => onMsg(payload));
-      ch.on('presence', { event: 'sync' }, () => {
-        const ps = ch.presenceState();
-        onPeers(Object.entries(ps).map(([id, metas]) => ({ ...metas[metas.length - 1], id })));
-      });
-      ch.subscribe(status => { if (status === 'SUBSCRIBED') { joined = true; ch.track(state); } });
+      let ch = null, state = {}, joined = false, closed = false, retry = 0, retryTimer = null;
+      const connect = () => {
+        const c = sb.channel('sudoku-room-' + code, { config: { presence: { key: RID }, broadcast: { self: false } } });
+        ch = c; joined = false;
+        c.on('broadcast', { event: 'm' }, ({ payload }) => { if (ch === c) onMsg(payload); });
+        c.on('presence', { event: 'sync' }, () => {
+          if (ch !== c) return;
+          onPeers(Object.entries(c.presenceState()).map(([id, metas]) => ({ ...metas[metas.length - 1], id })));
+        });
+        c.subscribe(status => {
+          if (ch !== c || closed) return;
+          if (status === 'SUBSCRIBED') { joined = true; retry = 0; c.track(state); onLink(true); onJoin(); return; }
+          joined = false; onLink(false);
+          // CHANNEL_ERROR / TIMED_OUT rejoin by themselves; a server-side close (CLOSED) needs a fresh channel
+          if (status === 'CLOSED') {
+            clearTimeout(retryTimer);
+            retryTimer = setTimeout(() => { if (closed || ch !== c) return; sb.removeChannel(c); connect(); }, Math.min(15000, 1000 * 2 ** retry++));
+          }
+        });
+      };
+      connect();
       return {
-        send: m => { ch.send({ type: 'broadcast', event: 'm', payload: m }); },
+        send: m => { if (ch) ch.send({ type: 'broadcast', event: 'm', payload: m }); },
         track: s => { state = s; if (joined) ch.track(s); },
-        leave: () => { try { ch.untrack(); } catch (e) {} sb.removeChannel(ch); },
+        leave: () => { closed = true; clearTimeout(retryTimer); try { ch.untrack(); } catch (e) {} sb.removeChannel(ch); },
       };
     }
     const bc = new BroadcastChannel('sudoku-room-' + code);
@@ -3320,7 +3350,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
       for (const [id, p] of peers) if (now - p.seen > 5000) { peers.delete(id); gone = true; }
       if (gone) emit();
     }, 1500);
-    setTimeout(() => { beat(true); emit(); }, 0);
+    setTimeout(() => { beat(true); emit(); onLink(true); onJoin(); }, 0);
     return {
       send: m => bc.postMessage({ kind: 'msg', payload: m }),
       track: s => { state = s; beat(); emit(); },
@@ -3328,20 +3358,49 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     };
   }
 
-  // ---------- my presence ----------
+  // ---------- my presence (who) and my state (cursor, progress, activity) ----------
   const filledCount = () => S.values.reduce((n, v, i) => n + (v && !S.puzzle[i] ? 1 : 0), 0);
-  function myPresence() {
+  const IDLE_MS = 60000, STALE_MS = 15000, BEAT_MS = 5000;
+  let lastInputAt = Date.now();
+  const isAway = () => document.visibilityState === 'hidden' || Date.now() - lastInputAt > IDLE_MS;
+  for (const ev of ['pointerdown', 'keydown']) document.addEventListener(ev, () => { const was = isAway(); lastInputAt = Date.now(); if (was) sendSt(true); }, true);
+  const myPresence = () => ({ name: userName(), joinedAt: room.joinedAt });
+  function myState() {
     const inGame = S && S.room;
     return {
-      name: userName(), joinedAt: room.joinedAt,
       sel: inGame && S.room.mode === 'coop' ? S.sel : -1,
       gameId: inGame ? S.room.gameId : null,
       prog: inGame ? { filled: filledCount(), total: S.puzzle.filter(v => !v).length, mistakes: S.mistakes, doneAt: S.done ? S.elapsed : null } : null,
+      away: isAway(),
     };
   }
-  function track() { if (room) room.net.track(myPresence()); }
-  function roomCursor() { if (room && S && S.room && S.room.mode === 'coop') track(); else if (room) track(); }
-  function roomProgress() { if (room && S && S.room) { track(); renderRoomBar(); rememberRoom(); } }
+  // other players' latest state, keyed by their id; seen = when we last heard from them
+  let peerState = new Map();
+  const stateOf = id => id === RID ? { ...myState(), seen: Date.now() } : (peerState.get(id) || null);
+  const isFresh = id => { const p = stateOf(id); return !!p && Date.now() - p.seen < STALE_MS; };
+  let lastTracked = '';
+  function track() { if (!room) return; const p = myPresence(), k = JSON.stringify(p); if (k === lastTracked) return; lastTracked = k; room.net.track(p); }
+  let stTimer = null, stLast = 0;
+  function sendSt(now) {
+    if (!room) return;
+    const go = () => { stTimer = null; stLast = Date.now(); if (room) room.net.send({ t: 'st', id: RID, ...myState() }); };
+    if (now) { clearTimeout(stTimer); go(); return; }
+    if (!stTimer) stTimer = setTimeout(go, Math.max(0, 300 - (Date.now() - stLast)));
+  }
+  function roomCursor() { if (room) { track(); sendSt(); } }
+  function roomProgress() { if (room && S && S.room) { sendSt(); renderRoomBar(); rememberRoom(); } }
+  // the first player (in join order) who is still answering speaks for the room: setup and board for newcomers, periodic co-op sync
+  const speaker = (exclude = null) => { const p = room.players.find(p => p.id !== exclude && isFresh(p.id)); return p ? p.id : null; };
+  // coming back (tab shown again, phone woken, network back): say where I am and ask for what I missed
+  function roomResync() {
+    if (!room) return;
+    sendSt(true);
+    const coop = S && S.room && S.room.mode === 'coop';
+    room.net.send({ t: 'need', from: RID, gameId: S && S.room ? S.room.gameId : null, values: coop ? S.values : null });
+  }
+  document.addEventListener('visibilitychange', () => { if (!room) return; if (document.visibilityState === 'visible') roomResync(); else sendSt(true); renderRoomBar(); });
+  window.addEventListener('online', roomResync);
+  document.addEventListener('resume', roomResync);
   // last room: code + setup, and my own board for its current game (versus progress isn't shared, so it comes back from here)
   function rememberRoom() {
     if (!room) return;
@@ -3371,9 +3430,11 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   // ---------- join / leave ----------
   function joinRoom(code, cfg) {
     leaveRoom(true);
-    room = { code, joinedAt: Date.now(), players: [], hostId: null, cfg: cfg ? sanitizeCfg(cfg) : null, phase: 'lobby', gameId: null, seen: new Set(), doneSeen: new Set() };
-    room.net = openChannel(code, onRoomMsg, onRoomPeers);
+    room = { code, joinedAt: Date.now(), players: [], hostId: null, cfg: cfg ? sanitizeCfg(cfg) : null, phase: 'lobby', gameId: null, doneSeen: new Set(), linked: false };
+    peerState = new Map(); lastTracked = '';
+    room.net = openChannel(code, onRoomMsg, onRoomPeers, roomResync, up => { if (room) { room.linked = up; renderRoomBar(); } });
     track();
+    room.beat = setInterval(() => { sendSt(true); renderRoomBar(); }, BEAT_MS);
     try { history.replaceState(null, '', '?room=' + code); } catch (e) {}
     if (!cfg) room.lostTimer = setTimeout(() => {
       if (!room || room.code !== code || room.cfg) return;
@@ -3386,20 +3447,22 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
         rememberRoom(); renderRoomModal(); renderRoomBar(); roomInfo('방에 다시 들어왔습니다.'); return;
       }
       leaveRoom(true); renderRoomModal(); roomInfo('방을 찾지 못했습니다. 모두 나가면 방이 사라집니다.');
+      if (S && S.wasRoom) newGame(pickedLevel);
     }, 7000);
     else rememberRoom();
     renderRoomModal(); renderRoomBar(); syncPause();
   }
   function leaveRoom(quiet) {
     if (!room) return;
+    const hadGame = !!(S && S.room);
     if (!quiet) { const last = lastRoom(); if (last && last.code === room.code) lsSet('-lastRoom', { ...last, left: true }); }
-    clearTimeout(room.lostTimer); clearInterval(room.syncTimer); clearInterval(room.cdTimer); countingDown = false;
+    clearTimeout(room.lostTimer); clearInterval(room.syncTimer); clearInterval(room.cdTimer); clearInterval(room.beat); clearTimeout(stTimer); stTimer = null; countingDown = false;
     try { room.net.leave(); } catch (e) {}
-    room = null; peerCursors = new Map();
+    room = null; peerCursors = new Map(); peerState = new Map();
     if (S && S.room) { S.room = null; S.noLb = true; save(); }
     try { history.replaceState(null, '', location.pathname); } catch (e) {}
     renderRoomBar(); syncPause(); if (S) render();
-    if (!quiet) { renderRoomModal(); roomInfo('방에서 나왔습니다.'); }
+    if (!quiet) { renderRoomModal(); roomInfo('방에서 나왔습니다.'); if (hadGame) newGame(pickedLevel); }
   }
   window.addEventListener('pagehide', () => { rememberRoom(); leaveRoom(true); });
 
@@ -3409,40 +3472,57 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (players.findIndex(p => p.id === RID) >= MAX_PLAYERS) { leaveRoom(true); renderRoomModal(); roomInfo('방이 가득 찼습니다 (최대 4명).'); return; }
     room.players = players.slice(0, MAX_PLAYERS);
     room.hostId = room.players.length ? room.players[0].id : RID;
-    peerCursors = new Map();
-    if (S && S.room && S.room.mode === 'coop') for (const p of room.players)
-      if (p.id !== RID && p.sel >= 0 && p.gameId === S.room.gameId) peerCursors.set(p.sel, colorOf(p.id));
-    // the host greets newcomers with the setup and, mid-game, the current board
-    if (isHost() && room.cfg) {
-      const fresh = room.players.some(p => p.id !== RID && !room.seen.has(p.id));
-      if (fresh) {
-        room.net.send({ t: 'cfg', cfg: room.cfg });
-        if (S && S.room && S.room.gameId === room.gameId) room.net.send(syncMsg());
-      }
-    }
-    room.seen = new Set(room.players.map(p => p.id));
-    // versus: announce finishers
-    if (S && S.room && S.room.mode === 'versus') for (const p of room.players) {
-      const key = p.id + ':' + S.room.gameId;
-      if (p.id !== RID && p.gameId === S.room.gameId && p.prog && p.prog.doneAt != null && !room.doneSeen.has(key)) {
-        room.doneSeen.add(key);
-        roomInfo(`${p.name || '상대'} 님이 ${fmtTime(p.prog.doneAt)}에 완성했습니다.`);
-      }
-    }
-    renderRoomBar(); renderRoomModal();
+    for (const id of [...peerState.keys()]) if (!room.players.some(p => p.id === id)) peerState.delete(id);
+    peerUpdate();
+    renderRoomModal();
     if (S && S.room && S.done && S.room.mode === 'coop' && isHost() && S.lbState === 'wait') { S.lbState = null; roomSubmit(); }
     if (S && S.room) { render(); if (S.done) showRoomWin(); }
   }
 
+  // cursors and versus finish announcements come from the players' state messages
+  function peerUpdate() {
+    peerCursors = new Map();
+    if (S && S.room && S.room.mode === 'coop') for (const p of room.players) {
+      const st = p.id !== RID && stateOf(p.id);
+      if (st && st.sel >= 0 && st.gameId === S.room.gameId && !st.away && isFresh(p.id)) peerCursors.set(st.sel, colorOf(p.id));
+    }
+    if (S && S.room && S.room.mode === 'versus') for (const p of room.players) {
+      const st = p.id !== RID && stateOf(p.id), key = p.id + ':' + S.room.gameId;
+      if (st && st.gameId === S.room.gameId && st.prog && st.prog.doneAt != null && !room.doneSeen.has(key)) {
+        room.doneSeen.add(key);
+        roomInfo(`${p.name || '상대'} 님이 ${fmtTime(st.prog.doneAt)}에 완성했습니다.`);
+      }
+    }
+    renderRoomBar();
+  }
   const syncMsg = () => ({ t: 'sync', gameId: S.room.gameId, puzzle: S.puzzle, level: S.level, mode: S.room.mode, hints: S.room.hints, startAt: S.room.startAt, seed: S.seed,
     values: S.room.mode === 'coop' ? S.values : null, hintsUsed: S.hints, mistakes: S.mistakes });
 
   function onRoomMsg(m) {
     if (!room || !m || typeof m !== 'object') return;
+    if (m.t === 'st' && typeof m.id === 'string' && m.id !== RID) {
+      const prog = m.prog && typeof m.prog === 'object' ? { filled: +m.prog.filled || 0, total: +m.prog.total || 0, mistakes: +m.prog.mistakes || 0, doneAt: m.prog.doneAt == null ? null : +m.prog.doneAt } : null;
+      peerState.set(m.id, { sel: Number.isInteger(m.sel) ? m.sel : -1, gameId: typeof m.gameId === 'string' ? m.gameId : null, prog, away: !!m.away, seen: Date.now() });
+      peerUpdate();
+      if (S && S.room) render();
+      return;
+    }
+    if (m.t === 'need' && typeof m.from === 'string' && m.from !== RID) {
+      // co-op: take whatever the returning player has that I don't, then whoever speaks for the room answers with setup and board
+      if (S && S.room && S.room.mode === 'coop' && m.gameId === S.room.gameId && Array.isArray(m.values)) adoptValues(m.values, 0, 0);
+      sendSt(true);
+      if (room.cfg && speaker(m.from) === RID) {
+        room.net.send({ t: 'cfg', cfg: room.cfg });
+        if (S && S.room && S.room.gameId === room.gameId) room.net.send(syncMsg());
+      }
+      return;
+    }
     if (m.t === 'cfg' && m.cfg) { room.cfg = sanitizeCfg(m.cfg); clearTimeout(room.lostTimer); rememberRoom(); renderRoomModal(); renderRoomBar(); return; }
     if (m.t === 'start' || m.t === 'sync') {
       if (!validPuzzle(m.puzzle) || typeof m.gameId !== 'string') return;
       clearTimeout(room.lostTimer);
+      // a late sync from an older game (sent by someone who was asleep) must not pull everyone back
+      if (m.t === 'sync' && S && S.room && S.room.gameId !== m.gameId && (+m.startAt || 0) < S.room.startAt) return;
       if (!S || !S.room || S.room.gameId !== m.gameId) startRoomGame(m);
       if (m.t === 'sync' && Array.isArray(m.values) && S.room && S.room.mode === 'coop') adoptValues(m.values, +m.mistakes || 0, +m.hintsUsed || 0);
       return;
@@ -3483,9 +3563,9 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (candMode) setCandMode(false);
     hideOverlay(); if (openModalId === 'roomModal') closeModal();
     if (homeOpen) hideHome();
-    save(); render(); renderLevels(); track(); renderRoomBar(); syncPause();
+    save(); render(); renderLevels(); sendSt(true); renderRoomBar(); syncPause();
     clearInterval(room.syncTimer);
-    if (mode === 'coop') room.syncTimer = setInterval(() => { if (room && isHost() && S && S.room && !S.done) room.net.send(syncMsg()); }, 5000);
+    if (mode === 'coop') room.syncTimer = setInterval(() => { if (room && speaker() === RID && S && S.room && !S.done) room.net.send(syncMsg()); }, 5000);
     // short countdown so everyone starts together
     clearInterval(room.cdTimer); countingDown = false; syncPause();
     const tick = () => {
@@ -3514,8 +3594,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     let changed = false;
     for (let i = 0; i < 81; i++) {
       const d = values[i] | 0;
-      if (S.puzzle[i] || S.values[i] === d || d < 0 || d > 9) continue;
-      S.values[i] = d; if (d) S.notes[i] = 0; changed = true;
+      if (S.puzzle[i] || !d || S.values[i] || d > 9) continue;
+      S.values[i] = d; S.notes[i] = 0; changed = true;
     }
     S.mistakes = Math.max(S.mistakes, mistakes); S.hints = Math.max(S.hints, hintsUsed);
     if (changed) afterChange(true); else render();
@@ -3588,7 +3668,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
       return;
     }
     const rows = (room ? room.players : []).map(p => {
-      const mine = p.id === RID, pr = mine ? myPresence().prog : (p.gameId === S.room.gameId ? p.prog : null);
+      const mine = p.id === RID, st = stateOf(p.id), pr = st && st.gameId === S.room.gameId ? st.prog : null;
       return { name: p.name || '이름 없음', mine, pr };
     });
     rows.sort((a, b) => {
@@ -3619,13 +3699,17 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     const versus = room.cfg && room.cfg.mode === 'versus';
     const chips = room.players.map(p => {
       const mine = p.id === RID;
-      const pr = mine ? (S && S.room ? myPresence().prog : null) : (S && S.room && p.gameId === S.room.gameId ? p.prog : null);
-      let st = '';
-      if (versus && pr) st = pr.doneAt != null ? `완성 ${fmtTime(pr.doneAt)}` : `${Math.round(pr.filled / Math.max(1, pr.total) * 100)}% · 실수 ${pr.mistakes}`;
+      const ps = stateOf(p.id), pr = S && S.room && ps && ps.gameId === S.room.gameId ? ps.prog : null;
+      const act = mine ? '' : !isFresh(p.id) ? 'lost' : ps.away ? 'away' : 'on';
+      const parts = [];
+      if (versus && pr) parts.push(pr.doneAt != null ? `완성 ${fmtTime(pr.doneAt)}` : `${Math.round(pr.filled / Math.max(1, pr.total) * 100)}% · 실수 ${pr.mistakes}`);
+      if (act === 'away') parts.push('자리 비움');
+      if (act === 'lost') parts.push('응답 없음');
       const bar2 = versus && pr ? `<span class="pbar"><span style="width:${pr.doneAt != null ? 100 : Math.round(pr.filled / Math.max(1, pr.total) * 100)}%;background:${colorOf(p.id)}"></span></span>` : '';
-      return `<span class="pchip${mine ? ' me' : ''}"><i style="background:${colorOf(p.id)}"></i><span class="pn">${esc(p.name || '이름 없음')}${mine ? ' (나)' : ''}</span>${p.id === room.hostId ? '<b class="host">방장</b>' : ''}${st ? `<em>${st}</em>` : ''}${bar2}</span>`;
+      return `<span class="pchip${mine ? ' me' : ''}${act === 'away' || act === 'lost' ? ' ' + act : ''}" title="${act === 'on' ? '활동 중' : act === 'away' ? '자리 비움: 다른 탭·앱을 보고 있거나 1분 넘게 입력이 없습니다' : act === 'lost' ? '응답 없음: 15초 넘게 신호가 없습니다' : ''}"><i style="background:${colorOf(p.id)}"></i><span class="pn">${esc(p.name || '이름 없음')}${mine ? ' (나)' : ''}</span>${p.id === room.hostId && room.cfg ? '<b class="host">방장</b>' : ''}${parts.length ? `<em>${parts.join(' · ')}</em>` : ''}${bar2}</span>`;
     }).join('');
-    bar.innerHTML = `<div class="rb-head"><b>${room.cfg ? modeName(room.cfg.mode) : '연결 중'}</b><span class="code">${room.code}</span>${S && S.room ? '' : '<span class="wait">대기 중</span>'}<button type="button" class="btn-ghost sm" data-r="open">방 정보</button></div><div class="rb-players">${chips}</div>`;
+    const link = room.linked ? '' : '<span class="wait bad">연결 끊김 · 다시 연결 중</span>';
+    bar.innerHTML = `<div class="rb-head"><b>${room.cfg ? modeName(room.cfg.mode) : '연결 중'}</b><span class="code">${room.code}</span>${S && S.room ? '' : '<span class="wait">대기 중</span>'}${link}<button type="button" class="btn-ghost sm" data-r="open">방 정보</button></div><div class="rb-players">${chips}</div>`;
   }
   $('roomBar').addEventListener('click', e => { if (e.target.closest('[data-r="open"]')) openModal('roomModal'); });
 
@@ -3679,7 +3763,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
       return;
     }
     const host = isHost(), playing = !!(S && S.room && S.room.gameId === room.gameId);
-    const list = room.players.map(p => `<li><i style="background:${colorOf(p.id)}"></i><span>${esc(p.name || '이름 없음')}${p.id === RID ? ' (나)' : ''}</span>${p.id === room.hostId ? '<b class="host">방장</b>' : ''}</li>`).join('');
+    const list = room.players.map(p => `<li><i style="background:${colorOf(p.id)}"></i><span>${esc(p.name || '이름 없음')}${p.id === RID ? ' (나)' : ''}</span>${p.id === room.hostId && room.cfg ? '<b class="host">방장</b>' : ''}${p.id === RID ? '' : `<small class="pst">${!isFresh(p.id) ? '응답 없음' : stateOf(p.id).away ? '자리 비움' : '활동 중'}</small>`}</li>`).join('');
     let cfgHtml;
     if (!room.cfg) cfgHtml = '<p class="set-desc">방 정보를 받는 중입니다…</p>';
     else if (host) cfgHtml = cfgControls(room.cfg, 'rc') + (playing ? '<p class="set-desc">바꾼 설정은 다음 판부터 적용됩니다.</p>' : '');
@@ -3709,9 +3793,11 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     $('roomBtn').onclick = () => { draftCfg.level = pickedLevel; openModal('roomModal'); };
     let code = null;
     try { code = new URLSearchParams(location.search).get('room'); } catch (e) {}
-    if (S && S.room) { S.room = null; S.noLb = true; save(); render(); } // a reload ends the previous room game
+    // a reload ends the previous room game: rejoining brings it back, otherwise a fresh solo puzzle replaces it
+    const leftover = !!(S && S.room);
+    if (leftover) { S.room = null; S.noLb = true; S.wasRoom = true; save(); render(); }
     if (code && ROOM_RE.test(code.toUpperCase())) { joinRoom(code.toUpperCase(), null); openModal('roomModal'); }
-    else showHome();
+    else { if (leftover) newGame(pickedLevel); showHome(); }
   }
 
   window.__sudokuState = () => S; // read-only peek for tests
