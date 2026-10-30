@@ -523,7 +523,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     grid-template-areas: "board top" "board bar" "board room" "board panel" "board side"; }
   .play, .board-col { display: contents; }
   .board-wrap { grid-area: board; max-width: none; margin: 0;
-    width: min(calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)), 56vw); }
+    width: min(calc(100vh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)), 56vw);
+    width: min(calc(100svh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)), 56vw); }
   .top { grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; }
   .top h1 { font-size: 20px; white-space: nowrap; }
   .top h1 .ver { display: none; }
@@ -1838,9 +1839,12 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   const TECH_TIER = { 1: '입문·쉬움', 2: '보통', 3: '어려움', 4: '전문가', 5: '마스터 이상', 6: '마스터 이상' };
   const PENALTY = 30;
   const STORE = 'sudoku-practice-v1';
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.3.1';
   // in-game notes list only what players notice in the game; setup/server notes live in SETUP.md
   const PATCH_NOTES = [
+    { v: '1.3.1', date: '2026-10-30', items: [
+      '휴대폰에서 화면을 스크롤해 주소창이 숨거나 나타날 때, 또는 키보드가 열릴 때 판 크기가 바뀌던 문제를 고쳤습니다. 이제 판 크기는 고정되고, 화면을 돌리거나 창 너비가 바뀔 때만 다시 맞춥니다.',
+    ] },
     { v: '1.3.0', date: '2026-10-30', items: [
       '휴대폰을 가로로 돌리면 판은 왼쪽, 숫자판과 버튼은 오른쪽에 놓여 스크롤 없이 풀 수 있습니다. 처음 화면도 가로에 맞게 두 칸으로 나뉩니다.',
       '태블릿을 세로로 들면 판을 위에 크게, 숫자판을 아래에 놓습니다.',
@@ -2008,7 +2012,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (!wrap) return;
     wrap.style.maxWidth = '';
     if (LAND.matches) return; // sized by CSS from the screen height
-    const vh = window.visualViewport ? window.visualViewport.height : innerHeight;
+    const vh = stableHeight();
     const full = wrap.getBoundingClientRect().width;
     if (!full) return;
     let excess;
@@ -2021,9 +2025,24 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     }
     if (excess > 1) wrap.style.maxWidth = Math.max(260, Math.floor(full - excess)) + 'px';
   }
-  addEventListener('resize', fitBoardSoon);
-  addEventListener('orientationchange', () => setTimeout(fitBoard, 250));
-  if (window.visualViewport) visualViewport.addEventListener('resize', fitBoardSoon);
+  // Mobile browsers grow and shrink the visible height as the address bar hides on scroll (and when the
+  // keyboard opens). Fit against the small viewport (bar shown) and refit only when the width changes.
+  const svhProbe = document.createElement('div');
+  svhProbe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100vh;height:100svh;visibility:hidden;pointer-events:none';
+  document.body.appendChild(svhProbe);
+  const svhOk = window.CSS && CSS.supports && CSS.supports('height', '100svh');
+  let fitW = innerWidth, fitMinH = innerHeight;
+  function stableHeight() {
+    if (svhOk) return svhProbe.offsetHeight;
+    fitMinH = Math.min(fitMinH, innerHeight); // fallback: smallest height seen at this width
+    return fitMinH;
+  }
+  addEventListener('resize', () => {
+    if (innerWidth === fitW) return; // height-only change: toolbar or keyboard, keep the board as is
+    fitW = innerWidth; fitMinH = innerHeight;
+    fitBoardSoon();
+  });
+  addEventListener('orientationchange', () => setTimeout(() => { fitW = innerWidth; fitMinH = innerHeight; fitBoard(); }, 250));
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(fitBoardSoon);
     for (const sel of ['.top', '.bar', '#roomBar', '.tools', '#padMemo']) { const e = document.querySelector(sel); if (e) ro.observe(e); }
