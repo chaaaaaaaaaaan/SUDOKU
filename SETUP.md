@@ -3,7 +3,7 @@
 설치·운영 안내입니다. 버전별 바뀐 내용은 [README.md](README.md)(패치노트)에 있습니다.
 
 로그인 없이 누구나 쓰는 리더보드와 대전·협동 모드가 들어간 스도쿠입니다.
-파일은 세 개입니다.
+파일 구성은 다음과 같습니다.
 
 | 파일 | 용도 |
 |---|---|
@@ -11,6 +11,7 @@
 | `supabase.sql` | 리더보드 테이블과 접근 규칙 |
 | `README.md` | 패치노트 |
 | `SETUP.md` | 이 안내서 |
+| `manifest.webmanifest`, `icon-*.png`, `apple-touch-icon.png` | 휴대폰 홈 화면에 추가할 때 쓰는 앱 정보와 아이콘 |
 
 ## 1. Supabase 준비 (약 5분)
 
@@ -36,8 +37,8 @@ window.SUDOKU_CONFIG = {
 
 ## 2. 올리기 (하나만 고르세요)
 
-- **Netlify Drop (가장 쉬움)**: https://app.netlify.com/drop 에 `index.html`이 든 폴더를 끌어다 놓으면 바로 주소가 생깁니다.
-- **GitHub Pages**: 저장소에 `index.html`을 올리고 **Settings → Pages**에서 브랜치를 고르면 `https://아이디.github.io/저장소/` 주소가 생깁니다.
+- **Netlify Drop (가장 쉬움)**: https://app.netlify.com/drop 에 파일 전체가 든 폴더를 끌어다 놓으면 바로 주소가 생깁니다.
+- **GitHub Pages**: 저장소에 파일 전체를 올리고 **Settings → Pages**에서 브랜치를 고르면 `https://아이디.github.io/저장소/` 주소가 생깁니다.
 - **Vercel / Cloudflare Pages**: 폴더를 새 프로젝트로 올리면 됩니다. 빌드 설정은 필요 없습니다.
 
 ## 3. 확인하기

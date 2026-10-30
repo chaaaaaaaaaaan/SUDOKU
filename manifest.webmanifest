@@ -1,0 +1,32 @@
+{
+  "name": "Chan's SUDOKU",
+  "short_name": "SUDOKU",
+  "lang": "ko",
+  "description": "8단계 난이도 스도쿠 · 기법 힌트 · 대전과 협동",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#eceff3",
+  "theme_color": "#16202c",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

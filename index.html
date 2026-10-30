@@ -19,6 +19,16 @@ img { max-width: 100%; }
 [hidden] { display: none !important; }
 </style>
 <title>Chan's SUDOKU</title>
+<meta name="theme-color" content="#eceff3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e131a" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SUDOKU">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
@@ -73,6 +83,10 @@ button:disabled { cursor: default; }
 button:focus-visible, .board:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .app { max-width: 920px; margin: 0 auto; display: grid; gap: 18px; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+button, select, .cell, .board { touch-action: manipulation; }
+.board, .tools, .pad, .bar, .top, .home-sub { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .top h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 5vw, 34px); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
 .top h1 span { color: var(--accent); }
@@ -432,7 +446,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 .home-sub button { position: relative; display: grid; justify-items: center; gap: 4px; border: 1px solid var(--line); background: var(--raise); border-radius: 10px; padding: 10px 4px 8px; font-size: 12.5px; }
 .home-sub svg { width: 20px; height: 20px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .home-sub .dot { position: absolute; top: 6px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); }
-.home-foot { display: flex; justify-content: center; gap: 10px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.home-foot { display: flex; justify-content: center; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 .home-foot button { border: 0; background: none; color: var(--muted); padding: 0; text-decoration: underline; text-underline-offset: 3px; font-size: 12px; }
 .ver { font-size: 11px; font-weight: 500; color: var(--muted); font-family: var(--body); letter-spacing: 0; margin-left: 6px; vertical-align: 4px; }
 
@@ -449,7 +463,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 .note-ver h3 small { font: 400 12px var(--body); color: var(--muted); }
 .note-ver .new { font: 600 10px var(--body); color: var(--paper); background: var(--accent); border-radius: 4px; padding: 1px 6px; }
 
-@media (max-width: 760px) {
+@media (max-width: 760px) and (min-height: 521px), (orientation: portrait) and (max-width: 1100px) {
   .icon-btn span, .restart-btn span { display: none; }
   .top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; row-gap: 4px; }
   .top .meta { grid-column: 1 / -1; }
@@ -457,11 +471,11 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   .sheet .x-btn { width: 40px; height: 40px; font-size: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--raise); color: var(--ink); }
   .sheet { padding: 16px 16px 20px; }
   .sheet-head { margin: -16px -16px 0; padding: 12px 16px 10px; }
-  .restart-btn, .icon-btn { padding: 8px; }
+  .restart-btn, .icon-btn { padding: 8px; min-width: 40px; min-height: 40px; justify-content: center; }
   .bar-left, .bar-right { gap: 6px; }
   .bar { column-gap: 6px; }
   .btn-primary#newBtn { padding: 8px 12px; }
-  .select-wrap select { font-size: 14px; padding: 8px 24px 8px 10px; }
+  .select-wrap select { font-size: 16px; padding: 8px 24px 8px 10px; }
   .select-wrap svg { right: 5px; width: 16px; height: 16px; }
   .bar { flex-wrap: nowrap; flex-direction: row; }
   .bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
@@ -496,6 +510,47 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   .key .d { font-size: 28px; }
   .key .c { left: 0; right: 0; top: -16px; bottom: auto; text-align: center; font-size: 11px; font-weight: 600; }
   .keys-help { display: none; }
+  .play { justify-items: center; }
+  .board-col, .side { width: 100%; max-width: 620px; }
+  .board-wrap { max-width: 620px; }
+}
+
+/* phones held sideways: board on the left sized to the screen height, everything else on the right */
+@media (orientation: landscape) and (max-height: 520px) {
+  body { padding-block: 8px; }
+  .app { max-width: none; gap: 8px 16px; align-items: start;
+    grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto auto auto 1fr;
+    grid-template-areas: "board top" "board bar" "board room" "board panel" "board side"; }
+  .play, .board-col { display: contents; }
+  .board-wrap { grid-area: board; max-width: none; margin: 0;
+    width: min(calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)), 56vw); }
+  .top { grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; }
+  .top h1 { font-size: 20px; white-space: nowrap; }
+  .top h1 .ver { display: none; }
+  .top .bar-right { gap: 6px; }
+  .timer { font-size: 18px; }
+  .bar { grid-area: bar; }
+  .room-bar { grid-area: room; }
+  .panel { grid-area: panel; }
+  .side { grid-area: side; gap: 8px; }
+  .icon-btn span, .restart-btn span { display: none; }
+  .restart-btn, .icon-btn { padding: 8px; min-width: 40px; min-height: 40px; justify-content: center; }
+  .tool { padding: 5px 2px 4px; font-size: 11px; gap: 2px; }
+  .tool svg { width: 16px; height: 16px; }
+  .pad { max-width: 330px; gap: 5px; }
+  .key { aspect-ratio: 1.9; border-radius: 8px; }
+  .key .d { font-size: 24px; }
+  .key .c { right: 5px; bottom: 3px; font-size: 10px; }
+  .keys-help { display: none; }
+  .home-in { width: min(100%, 760px); grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); align-items: center; column-gap: 28px; row-gap: 12px; }
+  .home-title { grid-row: 1 / span 3; }
+  .home-title h1 { font-size: 40px; }
+}
+
+/* touch screens */
+@media (pointer: coarse) {
+  input, select, textarea { font-size: 16px !important; } /* below 16px iOS zooms in on focus */
+  .home-foot button { padding: 8px 6px; }
 }
 @media (max-width: 480px) {
   .chip .n { font-size: 12px; }
@@ -612,7 +667,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
       <section><h3>입력</h3>
         <ul>
           <li>칸을 누르고 아래 숫자판이나 키보드 <kbd>1</kbd>–<kbd>9</kbd>로 숫자를 넣습니다.</li>
-          <li><b>메모</b>: 메모 모드를 켜거나(<kbd>Shift</kbd>를 한 번 누름) <kbd>Shift</kbd>를 누른 채 숫자를 누르면 작은 후보 숫자를 적습니다. 휴대폰에서는 아래쪽 메모 줄을 씁니다.</li>
+          <li><b>메모</b>: 메모 모드를 켜거나(<kbd>Shift</kbd>를 한 번 누름) <kbd>Shift</kbd>를 누른 채 숫자를 누르면 작은 후보 숫자를 적습니다. 휴대폰을 세로로 들었을 때는 아래쪽 메모 줄을 쓰고, <b>메모</b> 버튼으로 메모 줄을 숨길 수 있습니다. 가로로 들면 메모 버튼으로 메모 모드를 켜고 끕니다.</li>
           <li><b>후보</b>: 누르면 후보 모드가 켜져 누르는 빈칸마다 들어갈 수 있는 숫자를 채웁니다. 길게 누르면 모든 빈칸을 채웁니다(<kbd>C</kbd> / <kbd>Shift</kbd>+<kbd>C</kbd>).</li>
           <li><b>지우기</b> <kbd>Del</kbd>, <b>취소</b> <kbd>Ctrl</kbd>+<kbd>Z</kbd>, 방향키로 칸 이동.</li>
           <li>이미 넣은 숫자를 바꾸려면 먼저 지운 뒤 다시 넣습니다.</li>
@@ -635,6 +690,12 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
           <li>참가자 이름 옆에 <b>자리 비움</b>(다른 탭·앱을 보거나 1분 넘게 입력 없음), <b>응답 없음</b>(15초 넘게 신호 없음)이 표시됩니다. 내 연결이 끊기면 방 막대에 <b>연결 끊김 · 다시 연결 중</b>이 보이고 자동으로 다시 접속합니다.</li>
           <li>방 게임을 하다가 방을 나가면 혼자 풀 새 문제로 바뀝니다.</li>
           <li>방은 마지막 사람이 나갈 때까지 유지됩니다. 같은 코드로 다시 들어오거나, 참가하기의 <b>최근 방 다시 들어가기</b>를 누르세요.</li>
+        </ul></section>
+      <section><h3>휴대폰</h3>
+        <ul>
+          <li>세로로 들면 판 아래에 정답 줄과 메모 줄이, 가로로 들면 판 오른쪽에 숫자판이 놓입니다.</li>
+          <li>브라우저 메뉴의 <b>홈 화면에 추가</b>를 누르면 앱처럼 전체 화면으로 열립니다.</li>
+          <li><b>설정</b>에서 화면 켜짐 유지와 진동을 켜고 끌 수 있습니다(지원하는 기기에서만 보임).</li>
         </ul></section>
       <section><h3>리더보드</h3>
         <ul>
@@ -708,6 +769,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     <section class="set-sec">
       <h3>입력</h3>
       <div class="opt"><div>메모 자동 정리<small>숫자를 넣으면 같은 행·열·박스의 메모에서 지움</small></div><button class="switch" id="optClean" role="switch" aria-checked="true" type="button" aria-label="메모 자동 정리"></button></div>
+      <div class="opt" id="optAwakeRow"><div>화면 켜짐 유지<small>문제를 푸는 동안 화면이 꺼지지 않음</small></div><button class="switch" id="optAwake" role="switch" aria-checked="true" type="button" aria-label="화면 켜짐 유지"></button></div>
+      <div class="opt" id="optVibeRow"><div>진동<small>틀렸을 때와 완성했을 때 짧게 진동</small></div><button class="switch" id="optVibe" role="switch" aria-checked="true" type="button" aria-label="진동"></button></div>
     </section>
   </div>
 </div>
@@ -1775,15 +1838,26 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   const TECH_TIER = { 1: '입문·쉬움', 2: '보통', 3: '어려움', 4: '전문가', 5: '마스터 이상', 6: '마스터 이상' };
   const PENALTY = 30;
   const STORE = 'sudoku-practice-v1';
-  const APP_VERSION = '1.2.1';
+  const APP_VERSION = '1.3.0';
+  // in-game notes list only what players notice in the game; setup/server notes live in SETUP.md
   const PATCH_NOTES = [
+    { v: '1.3.0', date: '2026-10-30', items: [
+      '휴대폰을 가로로 돌리면 판은 왼쪽, 숫자판과 버튼은 오른쪽에 놓여 스크롤 없이 풀 수 있습니다. 처음 화면도 가로에 맞게 두 칸으로 나뉩니다.',
+      '태블릿을 세로로 들면 판을 위에 크게, 숫자판을 아래에 놓습니다.',
+      '화면이 작은 휴대폰에서도 판, 도구, 숫자판이 한 화면에 들어오도록 판 크기를 자동으로 맞춥니다.',
+      '아이폰에서 난이도 선택이나 이름·방 코드 입력칸을 누르면 화면이 확대되던 문제를 고쳤습니다.',
+      '버튼을 빠르게 두 번 눌러도 화면이 확대되지 않고, 길게 눌러도 글자 선택 메뉴가 뜨지 않습니다. 화면을 아래로 당겨도 새로고침되지 않습니다.',
+      '휴대폰 홈 화면에 추가하면 앱처럼 전체 화면으로 열립니다.',
+      '설정에 화면 켜짐 유지(푸는 동안 화면이 꺼지지 않음)와 진동(틀렸을 때와 완성했을 때)을 추가했습니다. 지원하는 기기에서만 보입니다.',
+      '휴대폰에서 다시하기 같은 작은 버튼의 누르는 영역을 넓혔습니다.',
+    ] },
     { v: '1.2.1', date: '2026-10-27', items: [
-      '방 연결이 끊기던 문제를 고쳤습니다. 숫자를 빠르게 넣으면 서버의 접속 상태 갱신 제한에 걸려 방 연결이 끊겼고, 그 뒤로 숫자와 힌트가 오가지 않았으며 새로 들어온 사람은 방을 찾지 못했습니다.',
+      '같이 하기에서 숫자를 빠르게 넣으면 방 연결이 끊겨, 숫자와 힌트가 오가지 않고 새로 들어온 사람이 방을 찾지 못하던 문제를 고쳤습니다.',
       '연결이 끊기면 자동으로 다시 접속하고, 다시 접속하거나 화면으로 돌아오면 놓친 숫자를 받아 옵니다. 늦게 도착한 판이 다른 사람이 넣은 숫자를 지우지 않습니다.',
       '참가자 상태를 보여 줍니다: 자리 비움(다른 탭·앱을 보거나 1분 넘게 입력 없음), 응답 없음(15초 넘게 신호 없음), 연결 끊김(내 연결이 끊겨 다시 연결 중).',
       '방 게임을 하다가 방을 나가면 혼자 풀 새 문제로 바뀝니다. 새로고침 뒤 방에 다시 들어가지 않을 때도 새 문제로 시작합니다.',
       '방 게임 기록 시간을 완성한 순간 기준으로 정확히 잽니다.',
-      '방 정보를 받기 전에는 나에게 방장 표시를 붙이지 않습니다.',
+      '방 정보를 받기 전에 내 이름에 방장 표시가 붙던 문제를 고쳤습니다.',
     ] },
     { v: '1.2.0', date: '2026-10-27', items: [
       '처음 화면을 추가했습니다. 제목이나 홈 버튼을 누르면 돌아옵니다. 이어 하기, 새 게임, 같이 하기, 리더보드, 기법, 도움말, 패치노트로 바로 갈 수 있습니다.',
@@ -1792,7 +1866,6 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
       '대전은 완성한 사람마다 자기 기록이, 협동은 방장이 팀 기록(참가자 이름 모두)이 자동으로 등록됩니다.',
       '같이 하기 창을 열거나 방에서 시작을 기다리는 동안 혼자 풀던 문제의 시간이 멈춥니다.',
       '같이 하기 창이 열려 있거나 시작 카운트다운 중에는 새 문제 확인 창처럼 판을 흐리게 가립니다.',
-      '협동에서 정답 숫자, 힌트, 힌트 개수, 실수가 모두에게 공유되는지 확인했습니다.',
       '방 코드 복사는 이제 6자리 코드만 복사합니다.',
       '방은 마지막 사람이 나갈 때까지 유지되고, 같은 코드로 다시 들어올 수 있습니다. 새로고침해도 다시 접속하고 진행 상황이 돌아옵니다.',
       '방 참가자 목록이 들어오고 나가는 대로 바로 바뀝니다.',
@@ -1801,7 +1874,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     { v: '1.1.0', date: '2026-10-27', items: [
       '같이 하기: 대전과 협동 방을 만들 수 있습니다. 최대 4명, 6자리 코드나 링크로 들어옵니다.',
       '협동: 정답 숫자를 실시간으로 공유하고, 누가 쓴 힌트든 모두의 판에 보여 줍니다. 힌트 개수는 팀이 나눠 씁니다.',
-      'Supabase 온라인 리더보드: 로그인 없이 등록하고 이름을 바꿀 수 있습니다.',
+      '온라인 리더보드: 로그인 없이 기록을 등록하고 이름을 바꿀 수 있습니다.',
       '난이도를 고르면 바로 새 문제를 시작합니다.',
     ] },
     { v: '1.0.0', date: '2026-10-27', items: [
@@ -1813,7 +1886,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const cells = [];
   let S = null;
-  let settings = { clean: true, mode: 'instant', lives: 3, hintLimit: 0, theme: 'system', memoRow: true };
+  let settings = { clean: true, mode: 'instant', lives: 3, hintLimit: 0, theme: 'system', memoRow: true, awake: true, vibe: true };
   let pickedLevel = 3;
   let generating = false;
 
@@ -1914,7 +1987,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     levelSel.appendChild(o);
   }
   // phones show just the level name so it fits beside the buttons
-  const narrow = window.matchMedia('(max-width: 760px)');
+  const STACK = window.matchMedia('(max-width: 760px) and (min-height: 521px), (orientation: portrait) and (max-width: 1100px)'), LAND = window.matchMedia('(orientation: landscape) and (max-height: 520px)');
+  const narrow = { get matches() { return STACK.matches || LAND.matches; } };
   function labelLevels() { [...levelSel.options].forEach(o => { o.textContent = narrow.matches ? C.LEVELS[o.value] : `${o.value}단계 · ${C.LEVELS[o.value]}`; }); }
   labelLevels();
   function placeMenu() {
@@ -1923,8 +1997,37 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     else if (br.parentElement !== document.querySelector('.bar')) document.querySelector('.bar').appendChild(br);
   }
   placeMenu();
-  narrow.addEventListener ? narrow.addEventListener('change', placeMenu) : narrow.addListener(placeMenu);
-  narrow.addEventListener ? narrow.addEventListener('change', labelLevels) : narrow.addListener(labelLevels);
+  const onMQ = (mq, fn) => mq.addEventListener ? mq.addEventListener('change', fn) : mq.addListener(fn);
+  for (const mq of [STACK, LAND]) { onMQ(mq, placeMenu); onMQ(mq, labelLevels); onMQ(mq, () => fitBoardSoon()); }
+
+  // ---------- fit the board to the screen height ----------
+  let fitRaf = 0;
+  function fitBoardSoon() { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitBoard); }
+  function fitBoard() {
+    const wrap = document.querySelector('.board-wrap');
+    if (!wrap) return;
+    wrap.style.maxWidth = '';
+    if (LAND.matches) return; // sized by CSS from the screen height
+    const vh = window.visualViewport ? window.visualViewport.height : innerHeight;
+    const full = wrap.getBoundingClientRect().width;
+    if (!full) return;
+    let excess;
+    if (STACK.matches) {
+      const panel = $('panel');
+      const skip = panel && !panel.hidden ? panel.offsetHeight + 10 : 0; // a hint panel may scroll
+      excess = document.documentElement.scrollHeight - skip - vh;
+    } else {
+      excess = wrap.getBoundingClientRect().bottom + scrollY + 32 - vh;
+    }
+    if (excess > 1) wrap.style.maxWidth = Math.max(260, Math.floor(full - excess)) + 'px';
+  }
+  addEventListener('resize', fitBoardSoon);
+  addEventListener('orientationchange', () => setTimeout(fitBoard, 250));
+  if (window.visualViewport) visualViewport.addEventListener('resize', fitBoardSoon);
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(fitBoardSoon);
+    for (const sel of ['.top', '.bar', '#roomBar', '.tools', '#padMemo']) { const e = document.querySelector(sel); if (e) ro.observe(e); }
+  }
   levelSel.addEventListener('change', () => {
     const prev = S ? S.level : pickedLevel;
     pickedLevel = +levelSel.value;
@@ -1986,7 +2089,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   }
   function showHome() {
     closeModal();
-    homeOpen = true; $('home').hidden = false;
+    homeOpen = true; $('home').hidden = false; syncWake();
     const cont = $('hmContinue');
     if (S && S.room) { cont.hidden = false; cont.firstChild.textContent = '방으로 돌아가기 '; $('hmContinueInfo').textContent = `${room ? room.code : ''}`; }
     else {
@@ -2002,7 +2105,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   function hideHome() {
     if (!homeOpen) return;
     homeOpen = false; $('home').hidden = true;
-    syncPause();
+    syncPause(); syncWake(); fitBoardSoon();
     board.focus({ preventScroll: true });
   }
   $('homeBtn').onclick = showHome;
@@ -2185,7 +2288,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (settings.theme !== 'system' && hostTheme !== settings.theme) applyTheme();
   }).observe(rootEl, { attributes: true, attributeFilter: ['data-theme'] });
   for (const b of $('themeSeg').children) b.addEventListener('click', () => { settings.theme = b.dataset.v; save(); applyTheme(); });
-  const phone = window.matchMedia('(max-width: 760px)');
+  const phone = STACK; // answer row + memo row layout
   const padMemo = $('padMemo');
   for (let d = 1; d <= 9; d++) {
     const b = document.createElement('button');
@@ -2261,6 +2364,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (S.mode === 'instant' && wrong) {
       S.mistakes++;
       S.moves++;
+      buzz(S.lives && S.mistakes >= S.lives ? [90, 60, 90] : 70);
       if (S.lives && S.mistakes >= S.lives) { S.over = true; save(); render(); showOver(); return; }
       afterChange(true);
       return;
@@ -2303,11 +2407,13 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     if (S.values.every((v, i) => v === S.solution[i])) {
       if (S.room) S.elapsed = Math.max(0, Math.floor((Date.now() - S.room.startAt) / 1000)); // the shared clock, at this moment
       S.done = true; S.panel = null; S.marks = [];
+      buzz([40, 50, 40, 50, 120]); syncWake();
       save(); render(); showWin(); return;
     }
     if (valuesChanged && S.mode === 'grade' && !S.values.includes(0)) {
       const wrong = [];
       for (let i = 0; i < 81; i++) if (S.values[i] !== S.solution[i]) wrong.push(i);
+      if (wrong.length) buzz(70);
       S.marks = wrong; S.gradeFails++; S.mistakes += wrong.length;
       S.panel = { type: 'grade', wrong: wrong.length };
     }
@@ -2759,6 +2865,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     $('curMode').textContent = modeLabel(S.mode, S.lives, S.hintLimit);
     $('timer').textContent = fmtTime(S.elapsed);
     $('optClean').setAttribute('aria-checked', settings.clean);
+    $('optAwake').setAttribute('aria-checked', settings.awake !== false);
+    $('optVibe').setAttribute('aria-checked', settings.vibe !== false);
     const ms = $('modeStat');
     if (S.mode === 'grade') ms.innerHTML = `채점 모드${S.gradeFails ? ` · 실수 <b>${S.mistakes}</b>` : ''}`;
     else if (S.lives) ms.innerHTML = `실수 <b>${S.mistakes}/${S.lives}</b> <span class="lives">${Array.from({ length: S.lives }, (_, k) => `<i class="${k < S.mistakes ? 'used' : ''}"></i>`).join('')}</span>`;
@@ -3061,6 +3169,27 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   $('memoRowBtn').onclick = () => { settings.memoRow = !settings.memoRow; save(); applyMemoRow(); };
   $('hintBtn').onclick = requestHint;
   $('optClean').onclick = () => { settings.clean = !settings.clean; save(); render(); };
+  $('optAwake').onclick = () => { settings.awake = settings.awake === false; save(); render(); syncWake(); };
+  $('optVibe').onclick = () => { settings.vibe = settings.vibe === false; save(); render(); if (settings.vibe) buzz(30); };
+  if (!('wakeLock' in navigator)) $('optAwakeRow').hidden = true;
+  if (!navigator.vibrate) $('optVibeRow').hidden = true;
+
+  // ---------- phone niceties: vibration, keep the screen on while solving ----------
+  function buzz(pattern) { try { if (settings.vibe !== false && navigator.vibrate) navigator.vibrate(pattern); } catch (e) {} }
+  let wakeLock = null, wakePending = false;
+  async function syncWake() {
+    const want = settings.awake !== false && 'wakeLock' in navigator && document.visibilityState === 'visible'
+      && !homeOpen && !!S && !S.done && !S.over;
+    try {
+      if (want && !wakeLock && !wakePending) {
+        wakePending = true;
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => { wakeLock = null; });
+      } else if (!want && wakeLock) { const w = wakeLock; wakeLock = null; await w.release(); }
+    } catch (e) { wakeLock = null; } finally { wakePending = false; }
+  }
+  document.addEventListener('visibilitychange', syncWake);
+  setInterval(syncWake, 5000);
 
   // Shift tapped on its own toggles memo mode; Shift held while pressing a digit enters one note without toggling.
   let shiftDown = false, shiftUsed = false;
