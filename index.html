@@ -465,7 +465,8 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
 
 @media (max-width: 760px) and (min-height: 521px), (orientation: portrait) and (max-width: 1100px) {
   .icon-btn span, .restart-btn span { display: none; }
-  .top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; row-gap: 4px; }
+  .top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; row-gap: 0; }
+  .top .meta { line-height: 1.2; }
   .top .meta { grid-column: 1 / -1; }
   .top .bar-right { gap: 6px; }
   .sheet .x-btn { width: 40px; height: 40px; font-size: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--raise); color: var(--ink); }
@@ -485,26 +486,26 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   .bar .level-desc { grid-column: 1 / -1; }
   .play { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .board-wrap { margin: 0 auto; }
-  body { padding-block: 12px 24px; }
-  .app { gap: 12px; }
+  body { padding-block: 6px 8px; }
+  .app { gap: 8px; }
   .top h1 { font-size: 24px; white-space: nowrap; }
   .top h1 .ver { display: none; }
   .timer { font-size: 20px; }
-  .play { gap: 10px; }
-  .board-col { gap: 10px; }
+  .play { gap: 8px; }
+  .board-col { gap: 8px; }
   .cell .v { font-size: 7.6cqw; }
   .cell .notes span { font-size: 2.6cqw; }
-  .side { gap: 10px; }
+  .side { gap: 8px; }
   .tools { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
   #memoBtn { display: none; }
   #memoRowBtn { display: grid; }
-  .tool { padding: 5px 2px 4px; font-size: 10.5px; gap: 2px; border-radius: 8px; }
+  .tool { padding: 4px 2px 3px; font-size: 10.5px; gap: 1px; border-radius: 8px; }
   .tool svg { width: 16px; height: 16px; }
   .pad { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
-  .pad#pad { padding-top: 16px; }
+  .pad#pad { padding-top: 14px; }
   .pad.memo-pad { display: grid; }
   body.memo-row-off .pad.memo-pad { display: none; }
-  .memo-pad .key { aspect-ratio: 1; padding-bottom: 0; }
+  .memo-pad .key { aspect-ratio: 1.15; padding-bottom: 0; }
   .key.memo .d { font-size: 28px; color: var(--accent); font-weight: 600; }
   .key { aspect-ratio: .78; border-radius: 8px; overflow: visible; }
   .key .d { font-size: 28px; }
@@ -1839,9 +1840,13 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
   const TECH_TIER = { 1: '입문·쉬움', 2: '보통', 3: '어려움', 4: '전문가', 5: '마스터 이상', 6: '마스터 이상' };
   const PENALTY = 30;
   const STORE = 'sudoku-practice-v1';
-  const APP_VERSION = '1.3.1';
+  const APP_VERSION = '1.3.2';
   // in-game notes list only what players notice in the game; setup/server notes live in SETUP.md
   const PATCH_NOTES = [
+    { v: '1.3.2', date: '2026-10-30', items: [
+      '휴대폰에서 판이 작게 보이던 문제를 고쳤습니다. 위아래 여백과 버튼 줄 높이를 줄여 아이폰 Safari처럼 주소창이 화면을 많이 차지하는 브라우저에서도 판이 화면 너비를 꽉 채웁니다.',
+      '판은 화면 너비의 90%보다 작아지지 않습니다. 화면이 아주 작은 휴대폰에서는 살짝 스크롤하면 주소창이 숨으며 전부 보입니다.',
+    ] },
     { v: '1.3.1', date: '2026-10-30', items: [
       '휴대폰에서 화면을 스크롤해 주소창이 숨거나 나타날 때, 또는 키보드가 열릴 때 판 크기가 바뀌던 문제를 고쳤습니다. 이제 판 크기는 고정되고, 화면을 돌리거나 창 너비가 바뀔 때만 다시 맞춥니다.',
     ] },
@@ -2023,7 +2028,7 @@ kbd { font-family: var(--body); font-size: 11px; border: 1px solid var(--line); 
     } else {
       excess = wrap.getBoundingClientRect().bottom + scrollY + 32 - vh;
     }
-    if (excess > 1) wrap.style.maxWidth = Math.max(260, Math.floor(full - excess)) + 'px';
+    if (excess > 1) wrap.style.maxWidth = Math.max(260, Math.floor(full * 0.9), Math.floor(full - excess)) + 'px';
   }
   // Mobile browsers grow and shrink the visible height as the address bar hides on scroll (and when the
   // keyboard opens). Fit against the small viewport (bar shown) and refit only when the width changes.
